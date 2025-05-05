@@ -1,0 +1,12 @@
+using HosterBackend.Data.Enums;
+
+namespace HosterBackend.Dtos;
+
+public class EmployeeDto
+{
+    public int Id { get; set; }
+    public required string Email { get; set; }
+    public required string Status { get; set; }
+    public required string Name { get; set; }
+    public List<string> HasRoles { get; set; } = [];
+}

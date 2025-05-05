@@ -1,0 +1,14 @@
+[
+    {
+      "TypeName": "Khách hàng cá nhân",
+      "Description": "Khách hàng là cá nhân sử dụng dịch vụ cho mục đích riêng tư hoặc gia đình"
+    },
+    {
+      "TypeName": "Khách hàng doanh nghiệp",
+      "Description": "Khách hàng là công ty hoặc tổ chức sử dụng dịch vụ cho hoạt động kinh doanh"
+    },
+    {
+      "TypeName": "Khách hàng VIP",
+      "Description": "Khách hàng có mức độ ưu đãi cao, thường xuyên sử dụng dịch vụ với giá trị lớn"
+    }
+  ]

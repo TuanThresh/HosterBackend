@@ -1,0 +1,87 @@
+using System.Security.Cryptography;
+using System.Text;
+using HosterBackend.Data.Entities;
+using HosterBackend.Dtos;
+using HosterBackend.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace HosterBackend.Controllers;
+[Route("api/domain_account")]
+public class DomainAccountController(IDomainAccountRepository domainAccountRepository) : BaseApiController
+{
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<DomainAccountDto>>> GetDomainAccounts()
+    {
+        return Ok(await domainAccountRepository.GetAllDtoAsync<DomainAccountDto>());
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<DomainAccountDto>> GetDomainAccount(int id)
+    {
+        DomainAccountDto domainAccount;
+        
+        try
+        {
+            domainAccount = await domainAccountRepository.GetDtoByIdAsync<DomainAccountDto>(id);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+        return Ok(domainAccount);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> CreateDomainAccount(ChangeDomainAccountDto domainAccountDto)
+    {
+        try
+        {
+            using var hmac  = new HMACSHA512();
+
+            domainAccountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(domainAccountDto.Password));
+
+            domainAccountDto.PasswordSalt = hmac.Key;
+
+            await domainAccountRepository.AddAsync(domainAccountDto);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+        return Ok("Tạo tài khoản domain thành công");
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> UpdateDomainAccount(int id,[FromBody]ChangeDomainAccountDto domainAccountDto)
+    {
+        try
+        {
+            using var hmac  = new HMACSHA512();
+
+            domainAccountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(domainAccountDto.Password));
+
+            domainAccountDto.PasswordSalt = hmac.Key;
+            
+            await domainAccountRepository.UpdateAsync(id,domainAccountDto);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+        return Ok("Sửa tài khoản domain thành công");
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteDomainAccount(int id)
+    {
+        try
+        {
+            await domainAccountRepository.DeleteAsync(id);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+        return Ok("Xóa tài khoản domain thành công");
+    }
+}

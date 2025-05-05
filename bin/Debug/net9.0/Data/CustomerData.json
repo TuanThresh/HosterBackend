@@ -1,0 +1,26 @@
+[
+    {
+      "customerTypeId" : 1,
+      "Name": "Nguyễn Văn A",
+      "Email": "vana@example.com",
+      "Address": "123 Đường ABC, Quận 1, TP.HCM",
+      "PhoneNumber": "0909123456",
+      "ContractTotal": 3
+    },
+    {
+      "customerTypeId" : 1,
+      "Name": "Công ty TNHH B",
+      "Email": "contact@congtyb.vn",
+      "Address": "456 Đường DEF, Quận 3, TP.HCM",
+      "PhoneNumber": "02812345678",
+      "ContractTotal": 12
+    },
+    {
+      "customerTypeId" : 1,
+      "Name": "Trần Thị C",
+      "Email": "tranthi.c@example.com",
+      "Address": "789 Đường XYZ, Quận 5, TP.HCM",
+      "PhoneNumber": "0912345678",
+      "ContractTotal": 20
+    }
+  ]

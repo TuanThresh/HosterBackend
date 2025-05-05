@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "iqjTDSse9F81Ah7qO7r2lZwx2iuTN6idsBhSktWfAQw=",
+  "Source": "HosterBackend",
+  "BasePath": "_content/HosterBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
