@@ -23,11 +23,12 @@ public class AutoMapperProfiles : Profile
             .ForMember(d => d.HasCustomers,o => o.MapFrom(s => s.HasCustomers.ToList()));
         CreateMap<ChangeCustomerTypeDto,CustomerType>();
         CreateMap<DomainAccount,DomainAccountDto>()
-            .ForMember(d => d.BelongsTo, o => o.MapFrom(s => s.BelongsTo.DomainName));
+            .ForMember(d => d.RegisteredDomains, o => o.MapFrom(s => s.RegisteredDomains));
         CreateMap<ChangeDomainAccountDto,DomainAccount>();
+        CreateMap<ChangeDomainProductDto,DomainProduct>();
         CreateMap<DomainProduct,DomainProductDto>()
             .ForMember(d => d.DomainType, o => o.MapFrom(s => ((DomainTypeEnum)s.DomainType).ToString()))
-            .ForMember(d => d.HasAccounts, o => o.MapFrom(s => s.HasAccounts));
+            .ForMember(d => d.RegisteredDomains, o => o.MapFrom(s => s.RegisteredDomains));
         CreateMap<CreateOrderDto,Order>();
         CreateMap<UpdateOrderDto,Order>();
         CreateMap<Order,OrderDto>()
@@ -36,7 +37,6 @@ public class AutoMapperProfiles : Profile
         CreateMap<PaymentMethod,PaymentMethodDto>();
         CreateMap<Discount,DiscountDto>();
         CreateMap<ChangeDiscountDto,Discount>();
-        
-            
+        CreateMap<RegisteredDomain,RegisteredDomainDto>();
     }
 }

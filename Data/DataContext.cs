@@ -16,6 +16,7 @@ public class DataContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<New> News { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<RegisteredDomain> RegisteredDomains  { get; set; }
     public DataContext(DbContextOptions options) : base(options)
     {
         

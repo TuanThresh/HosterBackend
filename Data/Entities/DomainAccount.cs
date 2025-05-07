@@ -8,8 +8,7 @@ public class DomainAccount
     public required string Username { get; set; }
     public byte[] PasswordHash { get; set; } = [];
     public byte[] PasswordSalt { get; set; } = [];
-    public DomainProduct BelongsTo { get; set; } = null!;
-    public DateTime ExpiredAt { get; set; }
+    public List<RegisteredDomain> RegisteredDomains { get; set; } = [];
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }

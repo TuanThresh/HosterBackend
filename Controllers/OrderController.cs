@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
 
-public class OrderController(IOrderRepository orderRepository,ICustomerRepository customerRepository,IDomainProductRepository domainProductRepository,IDomainAccountRepository domainAccountRepository) : BaseApiController
+public class OrderController(IOrderRepository orderRepository,ICustomerRepository customerRepository,IDomainProductRepository domainProductRepository,IDomainAccountRepository domainAccountRepository,IRegisteredDomainRepository registeredDomainRepository) : BaseApiController
 {
     [Authorize(Roles = "Khách hàng")]
     [HttpPost]
@@ -23,59 +23,10 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
         
         var customerId = int.Parse(customerNameIndentifier.Value);
 
-        var createNewAccount = true;
-
-        var customer = await customerRepository.GetByIdAsync(customerId,x => x.Orders);
-
-        if(customer.Orders.Count > 0)
-        {
-            
-            DomainProduct domainProduct;
-
-            DomainAccount domainAccount;
-
-            foreach (var customerOrder in customer.Orders)
-            {
-                var order = await orderRepository.GetByIdAsync(customerOrder.Id,x => x.DomainProduct);
-                
-                if(await orderRepository.GetByPropertyAsync(x => x.DomainProductId == createOrderDto.DomainProductId) != null)
-                {
-                    domainProduct = await domainProductRepository.GetByIdAsync(order.DomainProductId,x => x.HasAccounts);
-
-                    domainAccount = await domainAccountRepository.GetByPropertyAsync(x => x.DomainProductId == domainProduct.Id && x.Username == customer.Name);
-
-                    domainAccount = RenewExistingAccount(domainAccount,createOrderDto.DurationByMonth);
-
-                    await domainAccountRepository.UpdateAsync(domainAccount.Id,domainAccount);
-
-                    createNewAccount = false;
-
-                    break;
-                }
-                
-            }
-        }
-        if(createNewAccount)
-        {
-            using var hmac = new HMACSHA512();
-
-                    var newDomainAccount = new DomainAccount{
-                        DomainProductId = domainProductToBuy.Id,
-                        RegisterPanel = "DefaultPanel",
-                        Username = customer.Name,
-                        PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GenerateRandomPassword())),
-                        PasswordSalt = hmac.Key,
-                        ExpiredAt = DateTime.Now.AddMonths(createOrderDto.DurationByMonth)
-                    };
-
-                    Console.WriteLine(newDomainAccount.ExpiredAt);
-
-                    await domainAccountRepository.AddAsync(newDomainAccount);
-        }
-
         createOrderDto.CustomerId = customerId;
 
         createOrderDto.TotalPrice = domainProductToBuy.Price * createOrderDto.DurationByMonth;
+
 
         await orderRepository.AddAsync(createOrderDto);
 
@@ -83,20 +34,20 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
 
     }
     
-    private static DomainAccount RenewExistingAccount(DomainAccount domainAccount,int DurationByMonth)
+    private static RegisteredDomain RenewRegisteredDomain(RegisteredDomain registeredDomain,int DurationByMonth)
     {
-        if (domainAccount.ExpiredAt > DateTime.Now)
+        if (registeredDomain.ExpiredAt > DateTime.Now)
             {
-                domainAccount.ExpiredAt = domainAccount.ExpiredAt.AddMonths(DurationByMonth);
+                registeredDomain.ExpiredAt = registeredDomain.ExpiredAt.AddMonths(DurationByMonth);
             }
         else
         {
-            domainAccount.ExpiredAt = DateTime.Now.AddMonths(DurationByMonth);
+            registeredDomain.ExpiredAt = DateTime.Now.AddMonths(DurationByMonth);
         }
 
-        domainAccount.UpdatedAt = DateTime.Now;
+        registeredDomain.UpdatedAt = DateTime.Now;
 
-        return domainAccount;
+        return registeredDomain;
     }
 
     private static string GenerateRandomPassword(int length = 12)
@@ -159,17 +110,112 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
         return Ok("Xóa đơn hàng thành công");
     }
     [HttpPut("{id:int}")]
-    public async Task<ActionResult> UpdateOrder(int id,[FromBody] UpdateOrderDto updateOrderDto)
+    public async Task<ActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto updateOrderDto)
+{
+    try
     {
-        try
+        var orderToUpdate = await orderRepository.GetByIdAsync(id);
+
+        // if (updateOrderDto.Status == OrderStatusEnum.Cancelled ||
+        //     updateOrderDto.Status == OrderStatusEnum.Pending ||
+        //     (updateOrderDto.Status == OrderStatusEnum.Paid && orderToUpdate.Status == OrderStatusEnum.Paid))
+        // {
+        //     return Ok("Sửa đơn hàng thành công");
+        // }
+
+        await orderRepository.UpdateAsync(id, updateOrderDto);
+
+        var customer = await customerRepository.GetByIdAsync(orderToUpdate.CustomerId);
+        
+        var domainProduct = await domainProductRepository.GetByIdAsync(orderToUpdate.DomainProductId);
+
+        if (await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName == $"{orderToUpdate.DomainFirstPart}.{domainProduct.DomainName}") == false)
         {
-            await orderRepository.UpdateAsync(id,updateOrderDto);
+
+            var random = new Random();
+
+            using var hmac = new HMACSHA512();
+
+            var createNewAccount = true;
+
+            DomainAccount newDomainAccount;
+
+            foreach(var domainAccount in await domainAccountRepository.GetAllAsync(x => x.RegisteredDomains))
+            {
+                if(domainAccount.RegisteredDomains.Any(x => x.DomainProductId == orderToUpdate.DomainProductId))
+                {
+                    createNewAccount = false;
+
+                    newDomainAccount = domainAccount;
+
+                    var fullDomainName = $"{orderToUpdate.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
+
+                    var newRegisteredDomain = new RegisteredDomain
+                    {
+                        FullDomainName = fullDomainName,
+                        DomainAccountId = newDomainAccount.Id,
+                        DomainProductId = domainProduct.Id,
+                        OrderId = orderToUpdate.Id,
+                        RegisteredAt = DateTime.Now,
+                        ExpiredAt = DateTime.Now.AddMonths(orderToUpdate.DurationByMonth)
+                    };
+                    Console.WriteLine("Tạo RegisteredDomain");
+
+                    await registeredDomainRepository.AddAsync(newRegisteredDomain);
+                    
+                    break;
+
+                    
+                }
+            }
+
+            if(createNewAccount)
+            {
+                newDomainAccount = new DomainAccount
+                {
+                    Username = customer.Name + random.Next(100000, 1000000).ToString(),
+                    RegisterPanel = "DefaultPanel",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GenerateRandomPassword())),
+                    PasswordSalt = hmac.Key
+                };
+                var fullDomainName = $"{orderToUpdate.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
+
+                var newRegisteredDomain = new RegisteredDomain
+                {
+                    FullDomainName = fullDomainName,
+                    DomainAccountId = newDomainAccount.Id,
+                    DomainProductId = domainProduct.Id,
+                    OrderId = orderToUpdate.Id,
+                    RegisteredAt = DateTime.Now,
+                    ExpiredAt = DateTime.Now.AddMonths(orderToUpdate.DurationByMonth)
+                };
+                Console.WriteLine("Tạo RegisteredDomain");
+
+                await registeredDomainRepository.AddAsync(newRegisteredDomain);
+                
+                Console.WriteLine("Tạo domain account");
+                // await domainAccountRepository.AddAsync(newDomainAccount);
+            }
+
+            
         }
-        catch (Exception ex)
+        else
         {
-            return BadRequest(ex);
+            var registeredDomain = await registeredDomainRepository.GetByPropertyAsync(x => x.FullDomainName == $"{orderToUpdate.DomainFirstPart}.{domainProduct.DomainName}");
+
+            registeredDomain = RenewRegisteredDomain(registeredDomain,orderToUpdate.DurationByMonth);
+
+            Console.WriteLine("Cập nhật RegisteredDomain");
+
+            await registeredDomainRepository.UpdateAsync(registeredDomain.Id,registeredDomain);
         }
-        return Ok("Sửa đơn hàng thành công");
     }
+    catch (Exception ex)
+    {
+        return BadRequest(ex);
+    }
+
+    return Ok("Sửa đơn hàng thành công");
+}
 
 }

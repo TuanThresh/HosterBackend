@@ -42,6 +42,7 @@ builder.Services.AddScoped<IDomainProductRepository,DomainProductRepository>();
 builder.Services.AddScoped<IOrderRepository,OrderRepository>();
 builder.Services.AddScoped<IPaymentMethodRepository,PaymentMethodRepository>();
 builder.Services.AddScoped<IDiscountRepository,DiscountRepository>();
+builder.Services.AddScoped<IRegisteredDomainRepository,RegisteredDomainRepository>();
 
 
 var app = builder.Build();

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HosterBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class Intital_Create : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,6 +45,25 @@ namespace HosterBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DomainAccounts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DomainProductId = table.Column<int>(type: "int", nullable: false),
+                    RegisterPanel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DomainAccounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DomainProducts",
                 columns: table => new
                 {
@@ -54,7 +73,6 @@ namespace HosterBackend.Migrations
                     PriceStart = table.Column<int>(type: "int", nullable: false),
                     DomainType = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false),
-                    DurationByMonth = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -188,25 +206,30 @@ namespace HosterBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DomainAccounts",
+                name: "RegisteredDomain",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FullDomainName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DomainAccountId = table.Column<int>(type: "int", nullable: false),
                     DomainProductId = table.Column<int>(type: "int", nullable: false),
-                    RegisterPanel = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpiredAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DomainAccounts", x => x.Id);
+                    table.PrimaryKey("PK_RegisteredDomain", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DomainAccounts_DomainProducts_DomainProductId",
+                        name: "FK_RegisteredDomain_DomainAccounts_DomainAccountId",
+                        column: x => x.DomainAccountId,
+                        principalTable: "DomainAccounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RegisteredDomain_DomainProducts_DomainProductId",
                         column: x => x.DomainProductId,
                         principalTable: "DomainProducts",
                         principalColumn: "Id",
@@ -250,6 +273,7 @@ namespace HosterBackend.Migrations
                     DiscountId = table.Column<int>(type: "int", nullable: false),
                     TotalPrice = table.Column<int>(type: "int", nullable: false),
                     PaymentMethodId = table.Column<int>(type: "int", nullable: false),
+                    DurationByMonth = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -304,11 +328,6 @@ namespace HosterBackend.Migrations
                 column: "CustomerTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DomainAccounts_DomainProductId",
-                table: "DomainAccounts",
-                column: "DomainProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_News_CategoryId",
                 table: "News",
                 column: "CategoryId");
@@ -332,6 +351,16 @@ namespace HosterBackend.Migrations
                 name: "IX_Orders_PaymentMethodId",
                 table: "Orders",
                 column: "PaymentMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RegisteredDomain_DomainAccountId",
+                table: "RegisteredDomain",
+                column: "DomainAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RegisteredDomain_DomainProductId",
+                table: "RegisteredDomain",
+                column: "DomainProductId");
         }
 
         /// <inheritdoc />
@@ -341,13 +370,13 @@ namespace HosterBackend.Migrations
                 name: "Authorizes");
 
             migrationBuilder.DropTable(
-                name: "DomainAccounts");
-
-            migrationBuilder.DropTable(
                 name: "News");
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "RegisteredDomain");
 
             migrationBuilder.DropTable(
                 name: "Employees");
@@ -365,10 +394,13 @@ namespace HosterBackend.Migrations
                 name: "Discounts");
 
             migrationBuilder.DropTable(
-                name: "DomainProducts");
+                name: "PaymentMethod");
 
             migrationBuilder.DropTable(
-                name: "PaymentMethod");
+                name: "DomainAccounts");
+
+            migrationBuilder.DropTable(
+                name: "DomainProducts");
 
             migrationBuilder.DropTable(
                 name: "CustomerTypes");

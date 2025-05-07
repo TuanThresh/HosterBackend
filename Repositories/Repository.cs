@@ -159,4 +159,8 @@ public class Repository<T> : IRepository<T> where T : class
 
         return await query.Where(predicate).ProjectTo<TDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync() ?? throw new Exception($"Không tìm thấy {typeof(T).Name}");
     }
+    public async Task<bool> CheckExistsAsync(Expression<Func<T,bool>> predicate)
+    {
+        return await _dbSet.AnyAsync(predicate);
+    }
 }

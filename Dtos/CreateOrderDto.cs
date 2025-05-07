@@ -3,6 +3,7 @@ namespace HosterBackend.Dtos;
 public class CreateOrderDto
 {
     public int DomainProductId { get; set; }
+    public required string DomainFirstPart { get; set; }
     public int? TotalPrice { get; set; }
     public int PaymentMethodId { get; set; }
     public int DiscountId { get; set; }

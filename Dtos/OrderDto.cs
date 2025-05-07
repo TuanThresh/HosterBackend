@@ -9,6 +9,9 @@ public class OrderDto
     public DomainProductDto DomainProduct { get; set; } = null!;
     public CustomerDto Customer { get; set; } = null!;
     public PaymentMethodDto PaymentMethod { get; set; } = null!;
+    public int DurationByMonth { get; set; }
+    public required string DomainFirstPart { get; set; }
+
     public int TotalPrice { get; set; }
     public required string Status { get; set; }
     public DateTime CreatedAt { get; set; }

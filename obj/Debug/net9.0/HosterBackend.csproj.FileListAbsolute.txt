@@ -169,3 +169,4 @@ D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\DomainAccountData.json
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\DomainProductData.json
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\DiscountData.json
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\PaymentMethodData.json
+D:\Hoster v2\HosterBackend\obj\Debug\net9.0\HosterBackend.sourcelink.json

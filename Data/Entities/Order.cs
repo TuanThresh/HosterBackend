@@ -9,12 +9,14 @@ public class Order
     public int CustomerId { get; set; }
     public Customer Customer { get; set; } = null!;
     public DomainProduct DomainProduct { get; set; } = null!;
+    public required string DomainFirstPart { get; set; }
     public int DiscountId { get; set; }
     public Discount Discount { get; set; } = null!;
     public int TotalPrice { get; set; }
     public int PaymentMethodId { get; set; }
     public PaymentMethod PaymentMethod { get; set; } = null!;
-    public OrderStatusEnum Status { get; set; }
+    public int DurationByMonth { get; set; }
+    public OrderStatusEnum Status { get; set; } = OrderStatusEnum.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }

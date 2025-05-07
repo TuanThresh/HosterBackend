@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HosterBackend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250503144823_Intital_Create")]
-    partial class Intital_Create
+    [Migration("20250506150809_InitialCreate3")]
+    partial class InitialCreate3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,9 +196,6 @@ namespace HosterBackend.Migrations
                     b.Property<int>("DomainProductId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ExpiredAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -220,8 +217,6 @@ namespace HosterBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DomainProductId");
-
                     b.ToTable("DomainAccounts");
                 });
 
@@ -241,9 +236,6 @@ namespace HosterBackend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DomainType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DurationByMonth")
                         .HasColumnType("int");
 
                     b.Property<int>("Price")
@@ -357,6 +349,9 @@ namespace HosterBackend.Migrations
                     b.Property<int>("DomainProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DurationByMonth")
+                        .HasColumnType("int");
+
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
@@ -428,6 +423,50 @@ namespace HosterBackend.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("RegisteredDomain", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DomainAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DomainProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpiredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FullDomainName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DomainAccountId");
+
+                    b.HasIndex("DomainProductId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("RegisteredDomains");
+                });
+
             modelBuilder.Entity("HosterBackend.Data.Entities.Authorize", b =>
                 {
                     b.HasOne("HosterBackend.Data.Entities.Employee", "Employee")
@@ -467,17 +506,6 @@ namespace HosterBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("CustomerType");
-                });
-
-            modelBuilder.Entity("HosterBackend.Data.Entities.DomainAccount", b =>
-                {
-                    b.HasOne("HosterBackend.Data.Entities.DomainProduct", "BelongsTo")
-                        .WithMany("HasAccounts")
-                        .HasForeignKey("DomainProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BelongsTo");
                 });
 
             modelBuilder.Entity("HosterBackend.Data.Entities.New", b =>
@@ -524,6 +552,33 @@ namespace HosterBackend.Migrations
                     b.Navigation("PaymentMethod");
                 });
 
+            modelBuilder.Entity("RegisteredDomain", b =>
+                {
+                    b.HasOne("HosterBackend.Data.Entities.DomainAccount", "DomainAccount")
+                        .WithMany("RegisteredDomains")
+                        .HasForeignKey("DomainAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HosterBackend.Data.Entities.DomainProduct", "DomainProduct")
+                        .WithMany("RegisteredDomains")
+                        .HasForeignKey("DomainProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HosterBackend.Data.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("DomainAccount");
+
+                    b.Navigation("DomainProduct");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("HosterBackend.Data.Entities.Category", b =>
                 {
                     b.Navigation("HasNews");
@@ -546,11 +601,16 @@ namespace HosterBackend.Migrations
                     b.Navigation("Orders");
                 });
 
+            modelBuilder.Entity("HosterBackend.Data.Entities.DomainAccount", b =>
+                {
+                    b.Navigation("RegisteredDomains");
+                });
+
             modelBuilder.Entity("HosterBackend.Data.Entities.DomainProduct", b =>
                 {
-                    b.Navigation("HasAccounts");
-
                     b.Navigation("Orders");
+
+                    b.Navigation("RegisteredDomains");
                 });
 
             modelBuilder.Entity("HosterBackend.Data.Entities.Employee", b =>

@@ -9,8 +9,7 @@ public class DomainProduct
     public int PriceStart { get; set; }
     public DomainTypeEnum DomainType { get; set; }
     public int Price { get; set; }
-    public int DurationByMonth { get; set; }
-    public List<DomainAccount> HasAccounts { get; set; } = [];
+    public List<RegisteredDomain> RegisteredDomains { get; set; } = [];
     public List<Order> Orders { get; set; } = [];
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
