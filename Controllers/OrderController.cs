@@ -11,25 +11,43 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
 
-public class OrderController(IOrderRepository orderRepository,ICustomerRepository customerRepository,IDomainProductRepository domainProductRepository,IDomainAccountRepository domainAccountRepository,IRegisteredDomainRepository registeredDomainRepository) : BaseApiController
+public class OrderController(IOrderRepository orderRepository,ICustomerRepository customerRepository,IDomainProductRepository domainProductRepository,IDomainAccountRepository domainAccountRepository,IRegisteredDomainRepository registeredDomainRepository,IMailService mailService) : BaseApiController
 {
     [Authorize(Roles = "Khách hàng")]
     [HttpPost]
     public async Task<ActionResult> CreateOrder(CreateOrderDto createOrderDto)
     {
-        var domainProductToBuy = await domainProductRepository.GetByIdAsync(createOrderDto.DomainProductId);
+        try
+        {
+            var domainProduct = await domainProductRepository.GetByIdAsync(createOrderDto.DomainProductId);
 
-        var customerNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
-        
-        var customerId = int.Parse(customerNameIndentifier.Value);
+            var fullDomainName = $"{createOrderDto.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
 
-        createOrderDto.CustomerId = customerId;
+            if(await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName.Equals(fullDomainName))) return BadRequest("Tên miền đã tồn tại");
 
-        createOrderDto.TotalPrice = domainProductToBuy.Price * createOrderDto.DurationByMonth;
+            var domainProductToBuy = await domainProductRepository.GetByIdAsync(createOrderDto.DomainProductId);
 
+            var customerNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
+            
+            var customerId = int.Parse(customerNameIndentifier.Value);
 
-        await orderRepository.AddAsync(createOrderDto);
+            createOrderDto.CustomerId = customerId;
 
+            createOrderDto.TotalPrice = domainProductToBuy.Price * createOrderDto.DurationByMonth;
+
+            var order = await orderRepository.AddAsync(createOrderDto);
+
+            var createdOrder = await orderRepository.GetByIdAsync(order.Id,x => x.Customer,x => x.DomainProduct,x => x.Discount,x => x.PaymentMethod);
+
+            var customer = await customerRepository.GetByIdAsync(customerId);
+
+            await mailService.SendEmailAsync(customer.Email,"Mua tên miền",order);
+
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
         return Ok("Tạo order thành công");
 
     }
@@ -114,14 +132,16 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
 {
     try
     {
-        var orderToUpdate = await orderRepository.GetByIdAsync(id);
+        var orderToUpdate = await orderRepository.GetByIdAsync(id,x => x.Customer,x => x.DomainProduct,x => x.Discount,x => x.PaymentMethod);
 
-        // if (updateOrderDto.Status == OrderStatusEnum.Cancelled ||
-        //     updateOrderDto.Status == OrderStatusEnum.Pending ||
-        //     (updateOrderDto.Status == OrderStatusEnum.Paid && orderToUpdate.Status == OrderStatusEnum.Paid))
-        // {
-        //     return Ok("Sửa đơn hàng thành công");
-        // }
+        if (updateOrderDto.Status == OrderStatusEnum.Cancelled ||
+            updateOrderDto.Status == OrderStatusEnum.Pending ||
+            (updateOrderDto.Status == OrderStatusEnum.Paid && orderToUpdate.Status == OrderStatusEnum.Paid))
+        {
+            await mailService.SendEmailAsync(orderToUpdate.Customer.Email,"Mua tên miền",orderToUpdate);
+
+            return Ok("Cập nhật tình trạng đơn hàng thành công");
+        }
 
         await orderRepository.UpdateAsync(id, updateOrderDto);
 
@@ -150,18 +170,7 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
 
                     var fullDomainName = $"{orderToUpdate.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
 
-                    var newRegisteredDomain = new RegisteredDomain
-                    {
-                        FullDomainName = fullDomainName,
-                        DomainAccountId = newDomainAccount.Id,
-                        DomainProductId = domainProduct.Id,
-                        OrderId = orderToUpdate.Id,
-                        RegisteredAt = DateTime.Now,
-                        ExpiredAt = DateTime.Now.AddMonths(orderToUpdate.DurationByMonth)
-                    };
-                    Console.WriteLine("Tạo RegisteredDomain");
-
-                    await registeredDomainRepository.AddAsync(newRegisteredDomain);
+                    await CreateRegisteredDomain(fullDomainName,newDomainAccount,domainProduct,orderToUpdate);
                     
                     break;
 
@@ -178,23 +187,12 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GenerateRandomPassword())),
                     PasswordSalt = hmac.Key
                 };
+
                 var fullDomainName = $"{orderToUpdate.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
 
-                var newRegisteredDomain = new RegisteredDomain
-                {
-                    FullDomainName = fullDomainName,
-                    DomainAccountId = newDomainAccount.Id,
-                    DomainProductId = domainProduct.Id,
-                    OrderId = orderToUpdate.Id,
-                    RegisteredAt = DateTime.Now,
-                    ExpiredAt = DateTime.Now.AddMonths(orderToUpdate.DurationByMonth)
-                };
-                Console.WriteLine("Tạo RegisteredDomain");
-
-                await registeredDomainRepository.AddAsync(newRegisteredDomain);
+                await CreateRegisteredDomain(fullDomainName,newDomainAccount,domainProduct,orderToUpdate);
                 
-                Console.WriteLine("Tạo domain account");
-                // await domainAccountRepository.AddAsync(newDomainAccount);
+                await domainAccountRepository.AddAsync(newDomainAccount);
             }
 
             
@@ -204,8 +202,6 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
             var registeredDomain = await registeredDomainRepository.GetByPropertyAsync(x => x.FullDomainName == $"{orderToUpdate.DomainFirstPart}.{domainProduct.DomainName}");
 
             registeredDomain = RenewRegisteredDomain(registeredDomain,orderToUpdate.DurationByMonth);
-
-            Console.WriteLine("Cập nhật RegisteredDomain");
 
             await registeredDomainRepository.UpdateAsync(registeredDomain.Id,registeredDomain);
         }
@@ -217,5 +213,19 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
 
     return Ok("Sửa đơn hàng thành công");
 }
+    private async Task CreateRegisteredDomain(string fullDomainName,DomainAccount newDomainAccount,DomainProduct domainProduct,Order orderToUpdate)
+    {
+        var newRegisteredDomain = new RegisteredDomain
+        {
+            FullDomainName = fullDomainName,
+            DomainAccountId = newDomainAccount.Id,
+            DomainProductId = domainProduct.Id,
+            OrderId = orderToUpdate.Id,
+            RegisteredAt = DateTime.Now,
+            ExpiredAt = DateTime.Now.AddMonths(orderToUpdate.DurationByMonth)
+        };
+
+        await registeredDomainRepository.AddAsync(newRegisteredDomain);
+    }
 
 }

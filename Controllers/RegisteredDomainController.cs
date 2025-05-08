@@ -56,6 +56,6 @@ public class RegisteredDomainController(IRegisteredDomainRepository registeredDo
         {
             return BadRequest(ex);
         }
-        return Ok("Xóa sản phẩm domain thành công");
+        return Ok("Xóa tên miền đã đăng kí thành công");
     }
 }

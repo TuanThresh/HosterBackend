@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using HosterBackend.Data.Entities;
@@ -123,5 +124,32 @@ public class CustomerController(ICustomerRepository customerRepository,ITokenSer
             return BadRequest(ex);
         }
         return Ok("Xóa khách hàng thành công");
+    }
+    [Authorize (Roles = "Quản trị viên")]
+    [HttpGet("{name}")]
+    public async Task<ActionResult<CustomerDto>> GetCustomerByName(string name)
+    {
+        CustomerDto customer;
+
+        try
+        {   
+            customer = await customerRepository.GetDtoByPropertyAsync<CustomerDto>(x => x.Name.Equals(name));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+        
+        return Ok(customer);
+    }
+    [Authorize (Roles = "Khách hàng")]
+    [HttpGet("profile")]
+    public async Task<ActionResult<CustomerDto>> GetCustomerProfile()
+    {
+        var customerNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
+        
+        var customerId = int.Parse(customerNameIndentifier.Value);
+
+        return await customerRepository.GetDtoByIdAsync<CustomerDto>(customerId);
     }
 }

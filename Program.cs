@@ -31,6 +31,7 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 // builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<IMailService,MailService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IEmployeeRepository,EmployeeRepository>();
 builder.Services.AddScoped<IAuthorizeRepository,AuthorizeRepository>();

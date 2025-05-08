@@ -12,23 +12,25 @@ public class AutoMapperProfiles : Profile
         CreateMap<Employee,EmployeeDto>()
             .ForMember(d => d.HasRoles, o => o.MapFrom(s => s.HasRoles.Select(x => x.Role.RoleName)))
             .ForMember(d => d.Status, o => o.MapFrom(s => ((EmployeeStatusEnum)s.Status).ToString()));
-        CreateMap<ChangeEmployeeDto,Employee>();
+        CreateMap<ChangeEmployeeDto,Employee>()
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name.ToLower()));
         CreateMap<Role,RoleDto>()
             .ForMember(d => d.GivenEmployees, o => o.MapFrom(s => s.GivenEmployees.Select(x => x.Employee)));
         CreateMap<ChangeRoleDto,Role>();
         CreateMap<Customer,CustomerDto>()
             .ForMember(d => d.HasType, o => o.MapFrom(s => s.HasType.TypeName));
-        CreateMap<ChangeCustomerDto,Customer>();
+        CreateMap<ChangeCustomerDto,Customer>()
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name.ToLower()));
         CreateMap<CustomerType,CustomerTypeDto>()
             .ForMember(d => d.HasCustomers,o => o.MapFrom(s => s.HasCustomers.ToList()));
         CreateMap<ChangeCustomerTypeDto,CustomerType>();
-        CreateMap<DomainAccount,DomainAccountDto>()
-            .ForMember(d => d.RegisteredDomains, o => o.MapFrom(s => s.RegisteredDomains));
+        CreateMap<DomainAccount,DomainAccountDto>();
+            // .ForMember(d => d.RegisteredDomains, o => o.MapFrom(s => s.RegisteredDomains));
         CreateMap<ChangeDomainAccountDto,DomainAccount>();
         CreateMap<ChangeDomainProductDto,DomainProduct>();
         CreateMap<DomainProduct,DomainProductDto>()
-            .ForMember(d => d.DomainType, o => o.MapFrom(s => ((DomainTypeEnum)s.DomainType).ToString()))
-            .ForMember(d => d.RegisteredDomains, o => o.MapFrom(s => s.RegisteredDomains));
+            .ForMember(d => d.DomainType, o => o.MapFrom(s => ((DomainTypeEnum)s.DomainType).ToString()));
+            // .ForMember(d => d.RegisteredDomains, o => o.MapFrom(s => s.RegisteredDomains));
         CreateMap<CreateOrderDto,Order>();
         CreateMap<UpdateOrderDto,Order>();
         CreateMap<Order,OrderDto>()

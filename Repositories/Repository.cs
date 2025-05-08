@@ -30,7 +30,7 @@ public class Repository<T> : IRepository<T> where T : class
             {
                 var entityProperty = GetEntityProperty<string>(mappedEntity,condition);
 
-                if(await _dbSet.AnyAsync(x => EF.Property<string>(x,condition) == entityProperty))
+                if(await _dbSet.AnyAsync(x => EF.Property<string>(x,condition) == entityProperty.ToLower()))
                 {
                     throw new Exception($"Đã có {typeof(T).Name} với {condition} là " + entityProperty);
                 }
@@ -109,7 +109,7 @@ public class Repository<T> : IRepository<T> where T : class
             {
                 var entityProperty = GetEntityProperty<string>(mappedEntity,condition);
 
-                if(await _dbSet.AnyAsync(x => EF.Property<string>(x,condition) == entityProperty))
+                if(await _dbSet.AnyAsync(x => EF.Property<string>(x,condition) == entityProperty.ToLower()))
                 {
                     throw new Exception($"Đã có {typeof(T).Name} với {condition} là " + entityProperty);
                 }
