@@ -1,80 +1,24 @@
 [
     {
-      "DomainName": "example1.vn",
+      "DomainName": "vn",
       "PriceStart": 1000,
       "DomainType": 0,
       "Price": 1500,
       "UpdatedAt": "2025-05-01T12:00:00"
     },
     {
-      "DomainName": "example2.vn",
+      "DomainName": "com",
       "PriceStart": 1100,
       "DomainType": 0,
       "Price": 1600,
       "UpdatedAt": "2025-05-01T12:01:00"
     },
     {
-      "DomainName": "example3.vn",
+      "DomainName": "net",
       "PriceStart": 1200,
       "DomainType": 0,
       "Price": 1700,
       "UpdatedAt": "2025-05-01T12:02:00"
-    },
-    {
-      "DomainName": "business1.vn",
-      "PriceStart": 1300,
-      "DomainType": 0,
-      "Price": 1800,
-      "UpdatedAt": "2025-05-01T12:03:00"
-    },
-    {
-      "DomainName": "business2.vn",
-      "PriceStart": 1400,
-      "DomainType": 0,
-      "Price": 1900,
-      "UpdatedAt": "2025-05-01T12:04:00"
-    },
-    {
-      "DomainName": "global1.com",
-      "PriceStart": 2000,
-      "DomainType": 1,
-      "Price": 2500,
-      "UpdatedAt": "2025-05-01T12:05:00"
-    },
-    {
-      "DomainName": "global2.net",
-      "PriceStart": 2100,
-      "DomainType": 1,
-      "Price": 2600,
-      "UpdatedAt": "2025-05-01T12:06:00"
-    },
-    {
-      "DomainName": "global3.org",
-      "PriceStart": 2200,
-      "DomainType": 1,
-      "Price": 2700,
-      "UpdatedAt": "2025-05-01T12:07:00"
-    },
-    {
-      "DomainName": "international1.com",
-      "PriceStart": 2300,
-      "DomainType": 1,
-      "Price": 2800,
-      "UpdatedAt": "2025-05-01T12:08:00"
-    },
-    {
-      "DomainName": "international2.net",
-      "PriceStart": 2400,
-      "DomainType": 1,
-      "Price": 2900,
-      "UpdatedAt": "2025-05-01T12:09:00"
-    },
-    {
-      "DomainName": "international3.org",
-      "PriceStart": 2500,
-      "DomainType": 1,
-      "Price": 3000,
-      "UpdatedAt": "2025-05-01T12:10:00"
     }
   ]
   

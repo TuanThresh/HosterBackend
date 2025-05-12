@@ -17,13 +17,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 namespace HosterBackend.Controllers
 {
-    public class EmployeeController(IEmployeeRepository employeeRepository,IAuthorizeRepository authorizeRepository,IMapper mapper,ITokenService tokenService) : BaseApiController
+    public class EmployeeController(IEmployeeRepository employeeRepository,IAuthorizeRepository authorizeRepository,IMapper mapper,ITokenService tokenService,IMailService mailService) : BaseApiController
     {
 
         [HttpPost("login")]
         public async Task<ActionResult<EmployeeAuthDto>> Login(LoginDto loginDto)
         {
-            var existedEmployee = await employeeRepository.GetEmployeeByEmailOrName("",loginDto.Name);
+            var existedEmployee = await employeeRepository.GetEmployeeByEmailOrName(loginDto.Email,"");
 
             if(existedEmployee == null) return BadRequest("Tên tài khoản sai");
             
@@ -83,23 +83,18 @@ namespace HosterBackend.Controllers
             {   
                 using var hmac = new HMACSHA512();
 
-                createEmployeeDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(createEmployeeDto.Password));
+                var randomPassword = GenerateRandomPassword();
+
+                createEmployeeDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(randomPassword));
 
                 createEmployeeDto.PasswordSalt = hmac.Key;
 
-                var employee = await employeeRepository.AddAsync(createEmployeeDto);
+                var employee = await employeeRepository.AddAsync(createEmployeeDto,["Email","Name"]);
 
-                if(createEmployeeDto.Roles.Count > 0)
-                {
-                    foreach (var roleId in createEmployeeDto.Roles)
-                    {
-                        authorizeRepository.AuthorizeEmployee(employee.Id,roleId);
-                    }
-                }
+                await authorizeRepository.AuthorizeEmployee(employee.Id,1);
 
-                else authorizeRepository.AuthorizeEmployee(employee.Id,1);
+                await mailService.SendCreatedEmployee("Chào mừng nhân viên mới",employee,randomPassword);
 
-                await authorizeRepository.SaveAllAsync();
                 
             }
             catch (Exception ex)
@@ -107,6 +102,14 @@ namespace HosterBackend.Controllers
                 return BadRequest(ex);
             }
             return Ok("Tạo nhân viên thành công");
+        }
+        private static string GenerateRandomPassword(int length = 12)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+
+            var random = new Random();
+
+            return new string([.. Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)])]);
         }
         [Authorize(Roles = "Quản trị viên")]
         [HttpPut("{id:int}")]
@@ -120,31 +123,13 @@ namespace HosterBackend.Controllers
 
                 using var hmac = new HMACSHA512();
 
-                existedEmployee.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(updateEmployeeDto.Password));
+                // if(updateEmployeeDto.Password != null)
+                // {
+                //     existedEmployee.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(updateEmployeeDto.Password));
 
-                existedEmployee.PasswordSalt = hmac.Key;
-
+                //     existedEmployee.PasswordSalt = hmac.Key;
+                // }
                 await employeeRepository.UpdateAsync(id,existedEmployee);
-
-                var existedAuthorizes = await authorizeRepository.GetAuthorizes(id);
-
-                if(existedAuthorizes.Any())
-                {
-                    foreach (var authorize in existedAuthorizes)
-                    {
-                        authorizeRepository.DeleteAuthorize(authorize);
-                    }
-                }
-
-                if(updateEmployeeDto.Roles.Count > 0)
-                {
-                    foreach (var roleId in updateEmployeeDto.Roles)
-                    {
-                        authorizeRepository.AuthorizeEmployee(existedEmployee.Id,roleId);
-                    }
-                }
-                await authorizeRepository.SaveAllAsync();
-                
             }
             catch (Exception ex)
             {
@@ -165,6 +150,33 @@ namespace HosterBackend.Controllers
                 return BadRequest(ex);
             }
             return Ok("Xóa nhân viên thành công");
+        }
+        [Authorize(Roles = "Quản trị viên")]
+        [HttpPost("authorize")]
+        public async Task<ActionResult> AuthorizeEmployee([FromBody] AuthorizeEmployeeDto authorizeEmployeeDto)
+        {
+            var existedEmployee = await employeeRepository.GetByIdAsync(authorizeEmployeeDto.EmployeeId,x => x.HasRoles);
+
+            if(existedEmployee.HasRoles.Any(x => x.RoleId == authorizeEmployeeDto.RoleId)) return BadRequest("Nhân viên đã có quyền này rồi");
+
+            await authorizeRepository.AuthorizeEmployee(existedEmployee.Id,authorizeEmployeeDto.RoleId);
+
+            return Ok("Phân quyền thành công");
+        }
+        [Authorize(Roles = "Quản trị viên")]
+        [HttpDelete("remove_authorize")]
+        public async Task<ActionResult> RemoveAuthorizeEmployee([FromBody] AuthorizeEmployeeDto authorizeEmployeeDto)
+        {
+            try
+            {
+                var authorize = await authorizeRepository.GetAuthorize(authorizeEmployeeDto.EmployeeId,authorizeEmployeeDto.RoleId);
+                await authorizeRepository.DeleteAuthorize(authorize);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            return Ok("Hủy phân quyền thành công");
         }
         
     }

@@ -1,14 +1,14 @@
 [
-    {
-      "TypeName": "Khách hàng cá nhân",
-      "Description": "Khách hàng là cá nhân sử dụng dịch vụ cho mục đích riêng tư hoặc gia đình"
-    },
-    {
-      "TypeName": "Khách hàng doanh nghiệp",
-      "Description": "Khách hàng là công ty hoặc tổ chức sử dụng dịch vụ cho hoạt động kinh doanh"
-    },
-    {
-      "TypeName": "Khách hàng VIP",
-      "Description": "Khách hàng có mức độ ưu đãi cao, thường xuyên sử dụng dịch vụ với giá trị lớn"
-    }
-  ]
+  {
+    "TypeName": "Khách hàng thường",
+    "Description": "Khách hàng sử dụng dịch vụ ở mức cơ bản hoặc không thường xuyên"
+  },
+  {
+    "TypeName": "Khách hàng thân thiết",
+    "Description": "Khách hàng thường xuyên sử dụng dịch vụ và có lịch sử mua hàng tốt"
+  },
+  {
+    "TypeName": "Khách hàng mới",
+    "Description": "Khách hàng lần đầu sử dụng dịch vụ hoặc chưa có lịch sử giao dịch"
+  }
+]

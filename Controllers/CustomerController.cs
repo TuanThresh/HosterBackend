@@ -16,7 +16,7 @@ public class CustomerController(ICustomerRepository customerRepository,ITokenSer
     public async Task<ActionResult<CustomerAuthDto>> Login(LoginDto loginDto)
     {
         
-        var existedCustomer = await customerRepository.GetByPropertyAsync(x => x.Name == loginDto.Name,x => x.HasType);
+        var existedCustomer = await customerRepository.GetByPropertyAsync(x => x.Email == loginDto.Email,x => x.HasType);
 
         if(existedCustomer == null) return BadRequest("Tên tài khoản sai");
         
@@ -66,7 +66,7 @@ public class CustomerController(ICustomerRepository customerRepository,ITokenSer
         return Ok(customer);
     }
     [HttpPost("register")]
-    public async Task<ActionResult<CustomerAuthDto>> Register(ChangeCustomerDto createCustomerDto)
+    public async Task<ActionResult<CustomerAuthDto>> Register(RegisterCustomerDto registerCustomerDto)
     {
         Customer customer;
 
@@ -74,11 +74,11 @@ public class CustomerController(ICustomerRepository customerRepository,ITokenSer
         {
             using var hmac = new HMACSHA512();
 
-            createCustomerDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(createCustomerDto.Password));
+            registerCustomerDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerCustomerDto.Password));
 
-            createCustomerDto.PasswordSalt = hmac.Key;
+            registerCustomerDto.PasswordSalt = hmac.Key;
 
-            customer = await customerRepository.AddAsync(createCustomerDto,["Name","Email","PhoneNumber"]);
+            customer = await customerRepository.AddAsync(registerCustomerDto,["Name","Email","PhoneNumber"]);
 
         }
         catch (Exception ex)

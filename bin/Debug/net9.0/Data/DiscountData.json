@@ -1,19 +1,13 @@
 [
     {
-        "Percentage": 10,
-        "CustomerTypeId": 1,
-        "CreatedAt": "2025-05-01T09:00:00",
-        "UpdatedAt": "2025-05-01T09:00:00"
-    },
-    {
         "Percentage": 15,
-        "CustomerTypeId": 1,
+        "CustomerTypeId": 2,
         "CreatedAt": "2025-05-01T09:00:00",
         "UpdatedAt": "2025-05-01T09:00:00"
     },
     {
-        "Percentage": 10,
-        "CustomerTypeId": 1,
+        "Percentage": 30,
+        "CustomerTypeId": 3,
         "CreatedAt": "2025-05-01T09:00:00",
         "UpdatedAt": "2025-05-01T09:00:00"
     }

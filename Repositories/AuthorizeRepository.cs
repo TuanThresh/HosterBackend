@@ -2,24 +2,29 @@ using HosterBackend.Data;
 using HosterBackend.Interfaces;
 using HosterBackend.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using HosterBackend.Dtos;
 namespace HosterBackend.Repositories;
 
-public class AuthorizeRepository(DataContext context) : IAuthorizeRepository
+public class AuthorizeRepository(DataContext context,IMapper mapper) : IAuthorizeRepository
 {
 
-    public void AuthorizeEmployee(int employeeId, int roleId)
+    public async Task AuthorizeEmployee(int employeeId, int roleId)
     {
         context.Authorizes.Add(new Authorize{
             EmployeeId = employeeId,
             RoleId = roleId
         });
         
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
-    public void DeleteAuthorize(Authorize authorize)
+    public async Task DeleteAuthorize(Authorize authorize)
     {
         context.Authorizes.Remove(authorize);
+
+        await context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<Authorize>> GetAuthorizes(int employeeId, int roleId = -1)
@@ -30,6 +35,15 @@ public class AuthorizeRepository(DataContext context) : IAuthorizeRepository
             _ => await context.Authorizes.Where(x => x.EmployeeId == employeeId && x.RoleId == roleId).ToListAsync(),
         };
         return authorizes;
+    }
+
+    public async Task<IEnumerable<AuthorizeDto>> GetAuthorizeDtos()
+    {
+        return await context.Authorizes.ProjectTo<AuthorizeDto>(mapper.ConfigurationProvider).ToListAsync();
+    }
+    public async Task<Authorize> GetAuthorize(int employeeId,int roleId)
+    {
+        return await context.Authorizes.FirstOrDefaultAsync(x => x.EmployeeId == employeeId && x.RoleId == roleId) ?? throw new Exception("Không tìm thấy phân quyền");
     }
 
     public async Task<bool> SaveAllAsync()

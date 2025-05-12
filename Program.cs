@@ -27,6 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         };
     }
 );
+// builder.Services.AddHostedService<DomainExpiryNotifierService>();
 builder.Services.AddControllers().AddNewtonsoftJson();
 // builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -44,7 +45,15 @@ builder.Services.AddScoped<IOrderRepository,OrderRepository>();
 builder.Services.AddScoped<IPaymentMethodRepository,PaymentMethodRepository>();
 builder.Services.AddScoped<IDiscountRepository,DiscountRepository>();
 builder.Services.AddScoped<IRegisteredDomainRepository,RegisteredDomainRepository>();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -52,6 +61,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseCors("AllowAll");
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();

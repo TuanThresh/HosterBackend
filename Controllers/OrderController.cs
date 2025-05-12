@@ -11,7 +11,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
 
-public class OrderController(IOrderRepository orderRepository,ICustomerRepository customerRepository,IDomainProductRepository domainProductRepository,IDomainAccountRepository domainAccountRepository,IRegisteredDomainRepository registeredDomainRepository,IMailService mailService) : BaseApiController
+public class OrderController(IOrderRepository orderRepository,
+ICustomerRepository customerRepository,
+IDomainProductRepository domainProductRepository,
+IDomainAccountRepository domainAccountRepository,
+IRegisteredDomainRepository registeredDomainRepository,
+IDiscountRepository discountRepository,
+IMailService mailService) : BaseApiController
 {
     [Authorize(Roles = "Khách hàng")]
     [HttpPost]
@@ -30,10 +36,12 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
             var customerNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
             
             var customerId = int.Parse(customerNameIndentifier.Value);
+            
+            var discount = await discountRepository.GetByIdAsync(createOrderDto.DiscountId);
 
             createOrderDto.CustomerId = customerId;
 
-            createOrderDto.TotalPrice = domainProductToBuy.Price * createOrderDto.DurationByMonth;
+            createOrderDto.TotalPrice = (int)Math.Round(domainProductToBuy.Price * createOrderDto.DurationByMonth * (100 - discount.Percentage) / 100.0);
 
             var order = await orderRepository.AddAsync(createOrderDto);
 
@@ -190,9 +198,9 @@ public class OrderController(IOrderRepository orderRepository,ICustomerRepositor
 
                 var fullDomainName = $"{orderToUpdate.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
 
+                newDomainAccount = await domainAccountRepository.AddAsync(newDomainAccount);
+
                 await CreateRegisteredDomain(fullDomainName,newDomainAccount,domainProduct,orderToUpdate);
-                
-                await domainAccountRepository.AddAsync(newDomainAccount);
             }
 
             

@@ -13,14 +13,13 @@ public class AutoMapperProfiles : Profile
             .ForMember(d => d.HasRoles, o => o.MapFrom(s => s.HasRoles.Select(x => x.Role.RoleName)))
             .ForMember(d => d.Status, o => o.MapFrom(s => ((EmployeeStatusEnum)s.Status).ToString()));
         CreateMap<ChangeEmployeeDto,Employee>()
-            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name.ToLower()));
-        CreateMap<Role,RoleDto>()
-            .ForMember(d => d.GivenEmployees, o => o.MapFrom(s => s.GivenEmployees.Select(x => x.Employee)));
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name));
+        CreateMap<Role,RoleDto>();
         CreateMap<ChangeRoleDto,Role>();
         CreateMap<Customer,CustomerDto>()
             .ForMember(d => d.HasType, o => o.MapFrom(s => s.HasType.TypeName));
         CreateMap<ChangeCustomerDto,Customer>()
-            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name.ToLower()));
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name));
         CreateMap<CustomerType,CustomerTypeDto>()
             .ForMember(d => d.HasCustomers,o => o.MapFrom(s => s.HasCustomers.ToList()));
         CreateMap<ChangeCustomerTypeDto,CustomerType>();
@@ -40,5 +39,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<Discount,DiscountDto>();
         CreateMap<ChangeDiscountDto,Discount>();
         CreateMap<RegisteredDomain,RegisteredDomainDto>();
+        CreateMap<Authorize,AuthorizeDto>();
+        CreateMap<RegisterCustomerDto,Customer>();
     }
 }
