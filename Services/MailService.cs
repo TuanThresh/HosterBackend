@@ -212,5 +212,53 @@ private static string BuildAccountCreatedEmail(Employee employee,string password
     </body>
     </html>";
 }
+public async Task SendDiscountCodeEmailAsync(string toEmail, string subject, Discount discount)
+{
+    try
+    {
+        var message = new MimeMessage();
+        
+        // Địa chỉ người gửi
+        message.From.Add(new MailboxAddress("Your Store", _smtpUser));
+        
+        // Địa chỉ người nhận (email của khách hàng)
+        message.To.Add(MailboxAddress.Parse(toEmail));
+        
+        // Tiêu đề email
+        message.Subject = subject;
+
+        // Tạo nội dung email (nội dung liên quan đến mã giảm giá)
+        var body = BuildDiscountEmail(discount.DiscountCode);
+        var builder = new BodyBuilder { HtmlBody = body };
+        message.Body = builder.ToMessageBody();
+
+        // Kết nối và gửi email
+        using var client = new SmtpClient();
+        await client.ConnectAsync(_smtpServer, _smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+        await client.AuthenticateAsync(_smtpUser, _smtpPass);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+    }
+    catch (Exception ex)
+    {
+        // Log hoặc xử lý lỗi nếu có
+        Console.WriteLine($"Lỗi khi gửi email: {ex.Message}");
+    }
+}
+
+private static string BuildDiscountEmail(string discountCode)
+{
+    return $@"
+    <html>
+    <body>
+        <h2>Chào Quý khách,</h2>
+        <p>Chúng tôi xin thông báo rằng bạn đã nhận được mã giảm giá đặc biệt từ cửa hàng của chúng tôi.</p>
+        <p><strong>Mã giảm giá:</strong> {discountCode}</p>
+        <p>Hãy sử dụng mã giảm giá này để nhận ưu đãi cho lần mua hàng tiếp theo của bạn!</p>
+        <p>Chúc bạn có trải nghiệm mua sắm tuyệt vời tại cửa hàng của chúng tôi!</p>
+        <p>Trân trọng,<br/>Đội ngũ hỗ trợ</p>
+    </body>
+    </html>";
+}
 
 }

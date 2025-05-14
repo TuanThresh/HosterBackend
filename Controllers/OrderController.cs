@@ -29,6 +29,8 @@ IMailService mailService) : BaseApiController
 
             var fullDomainName = $"{createOrderDto.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
 
+            if(await orderRepository.CheckExistsAsync(x => x.DomainFirstPart == createOrderDto.DomainFirstPart && x.DomainProductId == createOrderDto.DomainProductId && x.Status == OrderStatusEnum.Pending)) return BadRequest("Tên miền đang được chờ phê duyệt mua");
+
             if(await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName.Equals(fullDomainName))) return BadRequest("Tên miền đã tồn tại");
 
             var domainProductToBuy = await domainProductRepository.GetByIdAsync(createOrderDto.DomainProductId);
@@ -36,18 +38,31 @@ IMailService mailService) : BaseApiController
             var customerNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
             
             var customerId = int.Parse(customerNameIndentifier.Value);
-            
-            var discount = await discountRepository.GetByIdAsync(createOrderDto.DiscountId);
+
+            var customer = await customerRepository.GetByIdAsync(customerId,x => x.HasType,x => x.Orders);
+    
+            if(createOrderDto.DiscountCode != null)
+            {
+                var discount = await discountRepository.GetByPropertyAsync(x => x.DiscountCode.Equals(createOrderDto.DiscountCode));
+
+                if(discount.ExpiredAt < DateTime.Now) return BadRequest("Mã giảm giá đã hết hạn");
+
+                if(await orderRepository.CheckExistsAsync(x => x.CustomerId == customerId && x.DiscountId == discount.Id)) return BadRequest("Mã giảm giá đã được khách hàng sử dụng rồi");
+
+                createOrderDto.TotalPrice = (int)Math.Round(domainProductToBuy.Price * createOrderDto.DurationByMonth * (100 - discount.Percentage) / 100.0);
+                
+            }
+            else createOrderDto.TotalPrice = domainProductToBuy.Price * createOrderDto.DurationByMonth;
 
             createOrderDto.CustomerId = customerId;
 
-            createOrderDto.TotalPrice = (int)Math.Round(domainProductToBuy.Price * createOrderDto.DurationByMonth * (100 - discount.Percentage) / 100.0);
+            // createOrderDto.TotalPrice = (int)Math.Round(domainProductToBuy.Price * createOrderDto.DurationByMonth * (100 - discount.Percentage) / 100.0);
 
             var order = await orderRepository.AddAsync(createOrderDto);
 
-            var createdOrder = await orderRepository.GetByIdAsync(order.Id,x => x.Customer,x => x.DomainProduct,x => x.Discount,x => x.PaymentMethod);
+            var createdOrder = await orderRepository.GetByIdAsync(order.Id,x => x.Customer,x => x.DomainProduct,x => x.PaymentMethod);
 
-            var customer = await customerRepository.GetByIdAsync(customerId);
+            
 
             await mailService.SendEmailAsync(customer.Email,"Mua tên miền",order);
 
@@ -140,7 +155,7 @@ IMailService mailService) : BaseApiController
 {
     try
     {
-        var orderToUpdate = await orderRepository.GetByIdAsync(id,x => x.Customer,x => x.DomainProduct,x => x.Discount,x => x.PaymentMethod);
+        var orderToUpdate = await orderRepository.GetByIdAsync(id,x => x.Customer,x => x.DomainProduct,x => x.PaymentMethod);
 
         if (updateOrderDto.Status == OrderStatusEnum.Cancelled ||
             updateOrderDto.Status == OrderStatusEnum.Pending ||

@@ -6,7 +6,7 @@ public class CustomerType
     public required string TypeName { get; set; }
     public string Description { get; set; } = "";
     public List<Customer> HasCustomers { get; set; } = [];
-    public Discount Discount { get; set; } = null!;
+    public List<Discount> Discounts { get; set; } = [];
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }

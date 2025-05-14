@@ -21,7 +21,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<ChangeCustomerDto,Customer>()
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Name));
         CreateMap<CustomerType,CustomerTypeDto>()
-            .ForMember(d => d.HasCustomers,o => o.MapFrom(s => s.HasCustomers.ToList()));
+            .ForMember(d => d.HasCustomers,o => o.MapFrom(s => s.HasCustomers.ToList()))
+            .ForMember(d => d.Discounts,o => o.MapFrom(s => s.Discounts.ToList()));
         CreateMap<ChangeCustomerTypeDto,CustomerType>();
         CreateMap<DomainAccount,DomainAccountDto>();
             // .ForMember(d => d.RegisteredDomains, o => o.MapFrom(s => s.RegisteredDomains));

@@ -37,9 +37,5 @@ public class DataContext : DbContext
                     .WithMany(x => x.GivenEmployees)
                     .HasForeignKey(x => x.RoleId)
                     .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<CustomerType>()
-                    .HasOne(x => x.Discount)
-                    .WithOne(x => x.CustomerType)
-                    .HasForeignKey<Discount>(d => d.CustomerTypeId);
     }
 }

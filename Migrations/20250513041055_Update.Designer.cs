@@ -4,6 +4,7 @@ using HosterBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HosterBackend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250513041055_Update")]
+    partial class Update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,19 +166,8 @@ namespace HosterBackend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CustomerTypeId")
+                    b.Property<int>("CustomerTypeId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DiscountCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpiredAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Percentage")
                         .HasColumnType("int");
@@ -185,7 +177,8 @@ namespace HosterBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerTypeId");
+                    b.HasIndex("CustomerTypeId")
+                        .IsUnique();
 
                     b.ToTable("Discounts");
                 });
@@ -351,9 +344,6 @@ namespace HosterBackend.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DiscountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("DomainFirstPart")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -379,8 +369,6 @@ namespace HosterBackend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("DiscountId");
 
                     b.HasIndex("DomainProductId");
 
@@ -512,8 +500,10 @@ namespace HosterBackend.Migrations
             modelBuilder.Entity("HosterBackend.Data.Entities.Discount", b =>
                 {
                     b.HasOne("HosterBackend.Data.Entities.CustomerType", "CustomerType")
-                        .WithMany("Discounts")
-                        .HasForeignKey("CustomerTypeId");
+                        .WithOne("Discount")
+                        .HasForeignKey("HosterBackend.Data.Entities.Discount", "CustomerTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CustomerType");
                 });
@@ -535,10 +525,6 @@ namespace HosterBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HosterBackend.Data.Entities.Discount", "Discount")
-                        .WithMany("Orders")
-                        .HasForeignKey("DiscountId");
-
                     b.HasOne("HosterBackend.Data.Entities.DomainProduct", "DomainProduct")
                         .WithMany("Orders")
                         .HasForeignKey("DomainProductId")
@@ -552,8 +538,6 @@ namespace HosterBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Discount");
 
                     b.Navigation("DomainProduct");
 
@@ -599,14 +583,10 @@ namespace HosterBackend.Migrations
 
             modelBuilder.Entity("HosterBackend.Data.Entities.CustomerType", b =>
                 {
-                    b.Navigation("Discounts");
+                    b.Navigation("Discount")
+                        .IsRequired();
 
                     b.Navigation("HasCustomers");
-                });
-
-            modelBuilder.Entity("HosterBackend.Data.Entities.Discount", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("HosterBackend.Data.Entities.DomainAccount", b =>

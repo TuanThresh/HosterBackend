@@ -4,6 +4,7 @@ using HosterBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HosterBackend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250513103150_Update2")]
+    partial class Update2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,7 +177,7 @@ namespace HosterBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExpiredAt")
+                    b.Property<DateTime?>("ExpiredAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Percentage")
@@ -185,7 +188,9 @@ namespace HosterBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerTypeId");
+                    b.HasIndex("CustomerTypeId")
+                        .IsUnique()
+                        .HasFilter("[CustomerTypeId] IS NOT NULL");
 
                     b.ToTable("Discounts");
                 });
@@ -512,8 +517,8 @@ namespace HosterBackend.Migrations
             modelBuilder.Entity("HosterBackend.Data.Entities.Discount", b =>
                 {
                     b.HasOne("HosterBackend.Data.Entities.CustomerType", "CustomerType")
-                        .WithMany("Discounts")
-                        .HasForeignKey("CustomerTypeId");
+                        .WithOne("Discount")
+                        .HasForeignKey("HosterBackend.Data.Entities.Discount", "CustomerTypeId");
 
                     b.Navigation("CustomerType");
                 });
@@ -599,7 +604,8 @@ namespace HosterBackend.Migrations
 
             modelBuilder.Entity("HosterBackend.Data.Entities.CustomerType", b =>
                 {
-                    b.Navigation("Discounts");
+                    b.Navigation("Discount")
+                        .IsRequired();
 
                     b.Navigation("HasCustomers");
                 });

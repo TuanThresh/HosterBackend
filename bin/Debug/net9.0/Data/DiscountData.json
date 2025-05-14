@@ -1,14 +1,31 @@
 [
-    {
-        "Percentage": 15,
-        "CustomerTypeId": 2,
-        "CreatedAt": "2025-05-01T09:00:00",
-        "UpdatedAt": "2025-05-01T09:00:00"
-    },
-    {
-        "Percentage": 30,
-        "CustomerTypeId": 3,
-        "CreatedAt": "2025-05-01T09:00:00",
-        "UpdatedAt": "2025-05-01T09:00:00"
-    }
+  {
+    "Percentage": 10,
+    "CustomerTypeId" : 3,
+    "DiscountCode": "WELCOME10-12/2025",
+    "Description": "Giảm 10% cho khách hàng mới - Hết hạn: 12/2025",
+    "ExpiredAt": "2025-12-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-05-13T00:00:00",
+    "UpdatedAt": "2025-05-13T00:00:00"
+  },
+  {
+    "Percentage": 15,
+    "CustomerTypeId" : 2,
+    "DiscountCode": "LOYAL15-11/2025",
+    "Description": "Giảm 15% cho khách hàng thân thiết - Hết hạn: 11/2025",
+    "ExpiredAt": "2025-11-30T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-05-13T00:00:00",
+    "UpdatedAt": "2025-05-13T00:00:00"
+  },
+  {
+    "Percentage": 20,
+    "DiscountCode": "SUMMER20-07/2025",
+    "Description": "Ưu đãi mùa hè - Giảm 20% toàn bộ đơn hàng - Hết hạn: 07/2025",
+    "ExpiredAt": "2025-07-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-05-13T00:00:00",
+    "UpdatedAt": "2025-05-13T00:00:00"
+  }
 ]

@@ -163,4 +163,11 @@ public class Repository<T> : IRepository<T> where T : class
     {
         return await _dbSet.AnyAsync(predicate);
     }
+
+    public async Task<IEnumerable<T>> GetAllByPropertyAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+    {
+        var query = ExtendEntity(_dbSet,includes);
+        
+        return await query.Where(predicate).ToListAsync();
+    }
 }
