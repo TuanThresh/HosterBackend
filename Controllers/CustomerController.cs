@@ -78,7 +78,7 @@ public class CustomerController(ICustomerRepository customerRepository,ITokenSer
 
             registerCustomerDto.PasswordSalt = hmac.Key;
 
-            customer = await customerRepository.AddAsync(registerCustomerDto,["Name","Email","PhoneNumber"]);
+            customer = await customerRepository.AddAsync(registerCustomerDto,["Name","Email","PhoneNumber","Address"]);
 
         }
         catch (Exception ex)
@@ -97,13 +97,17 @@ public class CustomerController(ICustomerRepository customerRepository,ITokenSer
         );
         
     }
-    [Authorize(Roles = "Quản trị viên")]
+    [Authorize(Roles = "Quản trị viên,Khách hàng")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateCustomer(int id,[FromBody] ChangeCustomerDto updateCustomerDto)
     {
+
+        var customer = await customerRepository.GetByIdAsync(id);
+
+        updateCustomerDto.CustomerTypeId = customer.CustomerTypeId;
         try
         {
-            await customerRepository.UpdateAsync(id,updateCustomerDto);
+            await customerRepository.UpdateAsync(id,updateCustomerDto,["Name","PhoneNumber","Address"]);
         }
         catch (Exception ex)
         {

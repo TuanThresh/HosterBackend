@@ -16,10 +16,11 @@ public class DataContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<New> News { get; set; }
     public DbSet<Category> Categories { get; set; }
-    public DbSet<RegisteredDomain> RegisteredDomains  { get; set; }
+    public DbSet<RegisteredDomain> RegisteredDomains { get; set; }
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
     public DataContext(DbContextOptions options) : base(options)
     {
-        
+
     }
     protected DataContext(){
 
@@ -37,5 +38,6 @@ public class DataContext : DbContext
                     .WithMany(x => x.GivenEmployees)
                     .HasForeignKey(x => x.RoleId)
                     .OnDelete(DeleteBehavior.Cascade);
+        
     }
 }

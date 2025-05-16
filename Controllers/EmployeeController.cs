@@ -12,30 +12,35 @@ using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 namespace HosterBackend.Controllers
 {
-    public class EmployeeController(IEmployeeRepository employeeRepository,IAuthorizeRepository authorizeRepository,IMapper mapper,ITokenService tokenService,IMailService mailService) : BaseApiController
+    public class EmployeeController(IEmployeeRepository employeeRepository,
+    IAuthorizeRepository authorizeRepository,
+    IMapper mapper, ITokenService tokenService,
+    IMailService mailService,
+    IPasswordResetTokenRepository passwordResetTokenRepository) : BaseApiController
     {
 
         [HttpPost("login")]
         public async Task<ActionResult<EmployeeAuthDto>> Login(LoginDto loginDto)
         {
-            var existedEmployee = await employeeRepository.GetEmployeeByEmailOrName(loginDto.Email,"");
+            var existedEmployee = await employeeRepository.GetEmployeeByEmailOrName(loginDto.Email, "");
 
-            if(existedEmployee == null) return BadRequest("Tên tài khoản sai");
-            
+            if (existedEmployee == null) return BadRequest("Tên tài khoản sai");
+
             using var hmac = new HMACSHA512(existedEmployee.PasswordSalt);
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-            
-            if(computedHash.Length != existedEmployee.PasswordHash.Length) return BadRequest("Mật khẩu sai");
+
+            if (computedHash.Length != existedEmployee.PasswordHash.Length) return BadRequest("Mật khẩu sai");
 
             for (int i = 0; i < computedHash.Length; i++)
             {
-                if(!computedHash[i].Equals(existedEmployee.PasswordHash[i]))
+                if (!computedHash[i].Equals(existedEmployee.PasswordHash[i]))
                 {
                     return BadRequest("Mật khẩu sai");
                 }
@@ -45,8 +50,9 @@ namespace HosterBackend.Controllers
 
             var roles = existedEmployee.HasRoles.Select(x => x.Role.RoleName).ToList();
 
-            
-            return new EmployeeAuthDto{
+
+            return new EmployeeAuthDto
+            {
                 Name = existedEmployee.Name,
                 Token = token,
                 HasRoles = roles
@@ -80,7 +86,7 @@ namespace HosterBackend.Controllers
         public async Task<ActionResult> CreateEmployee(ChangeEmployeeDto createEmployeeDto)
         {
             try
-            {   
+            {
                 using var hmac = new HMACSHA512();
 
                 var randomPassword = GenerateRandomPassword();
@@ -89,13 +95,14 @@ namespace HosterBackend.Controllers
 
                 createEmployeeDto.PasswordSalt = hmac.Key;
 
-                var employee = await employeeRepository.AddAsync(createEmployeeDto,["Email","Name"]);
+                var employee = await employeeRepository.AddAsync(createEmployeeDto, ["Email", "Name"]);
 
-                await authorizeRepository.AuthorizeEmployee(employee.Id,1);
+                var createdEmployee = await employeeRepository.GetByIdAsync(employee.Id, x => x.HasRoles);
 
-                await mailService.SendCreatedEmployee("Chào mừng nhân viên mới",employee,randomPassword);
+                await authorizeRepository.AuthorizeEmployee(employee.Id, 1);
 
-                
+                await mailService.SendCreatedEmployee("Chào mừng nhân viên mới", employee, randomPassword);
+
             }
             catch (Exception ex)
             {
@@ -113,23 +120,17 @@ namespace HosterBackend.Controllers
         }
         [Authorize(Roles = "Quản trị viên")]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateEmployee(int id,[FromBody] ChangeEmployeeDto updateEmployeeDto)
+        public async Task<ActionResult> UpdateEmployee(int id, [FromBody] ChangeEmployeeDto updateEmployeeDto)
         {
             try
-            {  
+            {
                 var existedEmployee = await employeeRepository.GetByIdAsync(id);
-                 
-                mapper.Map(updateEmployeeDto,existedEmployee);
+
+                mapper.Map(updateEmployeeDto, existedEmployee);
 
                 using var hmac = new HMACSHA512();
 
-                // if(updateEmployeeDto.Password != null)
-                // {
-                //     existedEmployee.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(updateEmployeeDto.Password));
-
-                //     existedEmployee.PasswordSalt = hmac.Key;
-                // }
-                await employeeRepository.UpdateAsync(id,existedEmployee);
+                await employeeRepository.UpdateAsync(id, existedEmployee);
             }
             catch (Exception ex)
             {
@@ -155,11 +156,11 @@ namespace HosterBackend.Controllers
         [HttpPost("authorize")]
         public async Task<ActionResult> AuthorizeEmployee([FromBody] AuthorizeEmployeeDto authorizeEmployeeDto)
         {
-            var existedEmployee = await employeeRepository.GetByIdAsync(authorizeEmployeeDto.EmployeeId,x => x.HasRoles);
+            var existedEmployee = await employeeRepository.GetByIdAsync(authorizeEmployeeDto.EmployeeId, x => x.HasRoles);
 
-            if(existedEmployee.HasRoles.Any(x => x.RoleId == authorizeEmployeeDto.RoleId)) return BadRequest("Nhân viên đã có quyền này rồi");
+            if (existedEmployee.HasRoles.Any(x => x.RoleId == authorizeEmployeeDto.RoleId)) return BadRequest("Nhân viên đã có quyền này rồi");
 
-            await authorizeRepository.AuthorizeEmployee(existedEmployee.Id,authorizeEmployeeDto.RoleId);
+            await authorizeRepository.AuthorizeEmployee(existedEmployee.Id, authorizeEmployeeDto.RoleId);
 
             return Ok("Phân quyền thành công");
         }
@@ -169,7 +170,7 @@ namespace HosterBackend.Controllers
         {
             try
             {
-                var authorize = await authorizeRepository.GetAuthorize(authorizeEmployeeDto.EmployeeId,authorizeEmployeeDto.RoleId);
+                var authorize = await authorizeRepository.GetAuthorize(authorizeEmployeeDto.EmployeeId, authorizeEmployeeDto.RoleId);
                 await authorizeRepository.DeleteAuthorize(authorize);
             }
             catch (Exception ex)
@@ -177,6 +178,72 @@ namespace HosterBackend.Controllers
                 return BadRequest(ex);
             }
             return Ok("Hủy phân quyền thành công");
+        }
+        [HttpPost("forgot_password")]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+        {
+            try
+            {
+                var employee = await employeeRepository.GetByPropertyAsync(x => x.Email.Equals(forgotPasswordDto.Email));
+
+                if (employee == null) return BadRequest("Không tìm thấy người dùng với email");
+
+                var token = new PasswordResetToken
+                {
+                    Email = forgotPasswordDto.Email,
+                    Token = Guid.NewGuid().ToString(),
+                    ExpiredAt = DateTime.UtcNow.AddMinutes(30)
+                };
+
+                await passwordResetTokenRepository.AddAsync(token);
+
+                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+
+            
+
+            return Ok("Đã gửi hướng dẫn mật khẩu tới email");
+
+        }
+        [HttpPost("reset_password")]
+        public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            try
+            {
+                var employee = await employeeRepository.GetByPropertyAsync(x => x.Email.Equals(resetPasswordDto.Email));
+
+                if (employee == null) return BadRequest("Không tìm thấy người dùng với email");
+
+                if (resetPasswordDto.NewPassword != resetPasswordDto.ConfirmPassword)
+                    return BadRequest("Mật khẩu mới không khớp.");
+
+                var token = await passwordResetTokenRepository.GetByPropertyAsync(x => x.Email == resetPasswordDto.Email
+                            && x.Token == resetPasswordDto.Token
+                            && !x.IsUsed
+                            && x.ExpiredAt > DateTime.Now);
+
+                if (token == null)
+                    return BadRequest("Token không hợp lệ hoặc đã hết hạn");
+
+                using var hmac = new HMACSHA512();
+
+                employee.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(resetPasswordDto.NewPassword));
+
+                employee.PasswordSalt = hmac.Key;
+
+                await employeeRepository.UpdateAsync(employee.Id, employee);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
+            return Ok("Đặt lại mật khẩu thành công");
         }
         
     }

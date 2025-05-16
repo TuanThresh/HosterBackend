@@ -44,7 +44,9 @@ builder.Services.AddScoped<IDomainProductRepository,DomainProductRepository>();
 builder.Services.AddScoped<IOrderRepository,OrderRepository>();
 builder.Services.AddScoped<IPaymentMethodRepository,PaymentMethodRepository>();
 builder.Services.AddScoped<IDiscountRepository,DiscountRepository>();
-builder.Services.AddScoped<IRegisteredDomainRepository,RegisteredDomainRepository>();
+builder.Services.AddScoped<IRegisteredDomainRepository, RegisteredDomainRepository>();
+builder.Services.AddScoped<IPasswordResetTokenRepository,PasswordResetTokenRepository>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

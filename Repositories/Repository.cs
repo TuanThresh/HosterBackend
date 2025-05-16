@@ -99,28 +99,32 @@ public class Repository<T> : IRepository<T> where T : class
 
     public async Task UpdateAsync<TDto>(int id,TDto entity,params string[] conditions) where TDto : class
     {
-        var existingEntity = await GetByIdAsync(id);
-
+    var existingEntity = await GetByIdAsync(id) ?? throw new Exception($"{typeof(T).Name} với ID = {id} không tồn tại.");
         var mappedEntity = _mapper.Map<T>(entity);
 
-        if(conditions.Length > 0)
+    if (conditions.Length > 0)
+    {
+        foreach (var condition in conditions)
         {
-            foreach (var condition in conditions)
-            {
-                var entityProperty = GetEntityProperty<string>(mappedEntity,condition);
+            var newValue = GetEntityProperty<string>(mappedEntity, condition);
 
-                if(await _dbSet.AnyAsync(x => EF.Property<string>(x,condition).ToLower() == entityProperty.ToLower()))
-                {
-                    throw new Exception($"Đã có {typeof(T).Name} với {condition} là " + entityProperty);
-                }
+            var isDuplicate = await _dbSet
+                .Where(x => EF.Property<string>(x, condition).ToLower() == newValue.ToLower())
+                .Where(x => EF.Property<int>(x, "Id") != id) 
+                .AnyAsync();
+
+            if (isDuplicate)
+            {
+                throw new Exception($"Đã tồn tại {typeof(T).Name} với {condition} là \"{newValue}\".");
             }
         }
+    }
 
-        _mapper.Map(entity,existingEntity);
+    _mapper.Map(entity, existingEntity);
 
-        _dbSet.Update(existingEntity);
+    _dbSet.Update(existingEntity);
 
-        await _context.SaveChangesAsync();
+    await _context.SaveChangesAsync();
     }
     private static IQueryable<T> ExtendEntity(IQueryable<T> query,params Expression<Func<T, object>>[]  includes)
     {
@@ -133,7 +137,7 @@ public class Repository<T> : IRepository<T> where T : class
 
         return query;
     }
-         private static TProp GetEntityProperty<TProp>(T entity,string property)
+    private static TProp GetEntityProperty<TProp>(T entity,string property)
     {
         var entityProperty = typeof(T).GetProperty(property)?.GetValue(entity) ?? throw new Exception("Không tìm thấy trường id cho thực thể này");
 

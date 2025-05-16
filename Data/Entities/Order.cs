@@ -16,6 +16,7 @@ public class Order
     public int DurationByMonth { get; set; }
     public int? DiscountId { get; set; }
     public Discount? Discount { get; set; }
+    public RegisteredDomain RegisteredDomain { get; set; } = null!;
     public OrderStatusEnum Status { get; set; } = OrderStatusEnum.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;

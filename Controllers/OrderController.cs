@@ -29,15 +29,15 @@ IMailService mailService) : BaseApiController
 
             var fullDomainName = $"{createOrderDto.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
 
+            var customerNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
+
+            var customerId = int.Parse(customerNameIndentifier.Value);
+
             if(await orderRepository.CheckExistsAsync(x => x.DomainFirstPart == createOrderDto.DomainFirstPart && x.DomainProductId == createOrderDto.DomainProductId && x.Status == OrderStatusEnum.Pending)) return BadRequest("Tên miền đang được chờ phê duyệt mua");
 
-            if(await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName.Equals(fullDomainName))) return BadRequest("Tên miền đã tồn tại");
+            if(await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName.Equals(fullDomainName) && x.Order.CustomerId != customerId)) return BadRequest("Tên miền đã tồn tại");
 
             var domainProductToBuy = await domainProductRepository.GetByIdAsync(createOrderDto.DomainProductId);
-
-            var customerNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
-            
-            var customerId = int.Parse(customerNameIndentifier.Value);
 
             var customer = await customerRepository.GetByIdAsync(customerId,x => x.HasType,x => x.Orders);
     
@@ -157,14 +157,11 @@ IMailService mailService) : BaseApiController
     {
         var orderToUpdate = await orderRepository.GetByIdAsync(id,x => x.Customer,x => x.DomainProduct,x => x.PaymentMethod);
 
-        if (updateOrderDto.Status == OrderStatusEnum.Cancelled ||
-            updateOrderDto.Status == OrderStatusEnum.Pending ||
-            (updateOrderDto.Status == OrderStatusEnum.Paid && orderToUpdate.Status == OrderStatusEnum.Paid))
-        {
-            await mailService.SendEmailAsync(orderToUpdate.Customer.Email,"Mua tên miền",orderToUpdate);
+        if(orderToUpdate.Status == OrderStatusEnum.Cancelled) return BadRequest("Đơn hàng đã bị hủy");
 
-            return Ok("Cập nhật tình trạng đơn hàng thành công");
-        }
+        else if(updateOrderDto.Status == OrderStatusEnum.Pending) return BadRequest("Không thể cập nhật trạng thái đang chờ cho đơn hàng");
+
+        else if (updateOrderDto.Status == OrderStatusEnum.Paid && orderToUpdate.Status == OrderStatusEnum.Paid) return BadRequest("Đơn hàng đã được thanh toán rồi");
 
         await orderRepository.UpdateAsync(id, updateOrderDto);
 
@@ -203,11 +200,13 @@ IMailService mailService) : BaseApiController
 
             if(createNewAccount)
             {
+                var randomPassword = GenerateRandomPassword();
+                var username = customer.Name + random.Next(100000, 1000000).ToString();
                 newDomainAccount = new DomainAccount
                 {
-                    Username = customer.Name + random.Next(100000, 1000000).ToString(),
+                    Username = username,
                     RegisterPanel = "DefaultPanel",
-                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(GenerateRandomPassword())),
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(randomPassword)),
                     PasswordSalt = hmac.Key
                 };
 
@@ -216,6 +215,8 @@ IMailService mailService) : BaseApiController
                 newDomainAccount = await domainAccountRepository.AddAsync(newDomainAccount);
 
                 await CreateRegisteredDomain(fullDomainName,newDomainAccount,domainProduct,orderToUpdate);
+
+                await mailService.SendEmailAsync(orderToUpdate.Customer.Email,"Mua tên miền",orderToUpdate,username,randomPassword);
             }
 
             
@@ -227,7 +228,10 @@ IMailService mailService) : BaseApiController
             registeredDomain = RenewRegisteredDomain(registeredDomain,orderToUpdate.DurationByMonth);
 
             await registeredDomainRepository.UpdateAsync(registeredDomain.Id,registeredDomain);
+
+            await mailService.SendEmailAsync(orderToUpdate.Customer.Email,"Mua tên miền",orderToUpdate);
         }
+
     }
     catch (Exception ex)
     {
