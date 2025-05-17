@@ -46,6 +46,8 @@ builder.Services.AddScoped<IPaymentMethodRepository,PaymentMethodRepository>();
 builder.Services.AddScoped<IDiscountRepository,DiscountRepository>();
 builder.Services.AddScoped<IRegisteredDomainRepository, RegisteredDomainRepository>();
 builder.Services.AddScoped<IPasswordResetTokenRepository,PasswordResetTokenRepository>();
+builder.Services.AddScoped<INewRepository, NewRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -73,20 +75,24 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
     await context.Database.MigrateAsync();
-    await Seed.SeedData<Role>(context,"Data/RoleSeedData.json");
+    await Seed.SeedData<Role>(context, "Data/RoleSeedData.json");
     await Seed.SeedEmployees(context);
-    await Seed.SeedData<CustomerType>(context,"Data/CustomerTypeData.json");
-    await Seed.SeedData<Customer>(context,"Data/CustomerData.json");
-    await Seed.SeedData<DomainProduct>(context,"Data/DomainProductData.json");
-    await Seed.SeedData<DomainAccount>(context,"Data/DomainAccountData.json");
-    await Seed.SeedData<PaymentMethod>(context,"Data/PaymentMethodData.json");
-    await Seed.SeedData<Discount>(context,"Data/DiscountData.json");
+    await Seed.SeedData<CustomerType>(context, "Data/CustomerTypeData.json");
+    await Seed.SeedData<Customer>(context, "Data/CustomerData.json");
+    await Seed.SeedData<DomainProduct>(context, "Data/DomainProductData.json");
+    await Seed.SeedData<DomainAccount>(context, "Data/DomainAccountData.json");
+    await Seed.SeedData<PaymentMethod>(context, "Data/PaymentMethodData.json");
+    await Seed.SeedData<Discount>(context, "Data/DiscountData.json");
+    await Seed.SeedData<Category>(context, "Data/CategoryData.json");
+    await Seed.SeedData<New>(context,"Data/NewData.json");
+    
+    
 
 }
 catch (Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex,"Có lỗi trong quá trình seed dữ liệu");
+    logger.LogError(ex, "Có lỗi trong quá trình seed dữ liệu");
 }
 
 

@@ -173,3 +173,5 @@ D:\Hoster v2\HosterBackend\obj\Debug\net9.0\HosterBackend.sourcelink.json
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\MailKit.dll
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\MimeKit.dll
+D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\CategoryData.json
+D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\NewData.json

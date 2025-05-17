@@ -266,7 +266,7 @@ public class MailService : IMailService
     </body>
     </html>";
     }
-    public async Task SendForgotPasswordEmaiAsync(string toEmail, string subject, string token)
+    public async Task SendForgotPasswordEmaiAsync(string toEmail, string subject, string token,string type)
     {
         try
         {
@@ -278,7 +278,7 @@ public class MailService : IMailService
 
             message.Subject = subject;
 
-            var body = BuildForgotPasswordEmail(token,toEmail);
+            var body = BuildForgotPasswordEmail(token,toEmail,type);
             var builder = new BodyBuilder { HtmlBody = body };
             message.Body = builder.ToMessageBody();
 
@@ -294,11 +294,13 @@ public class MailService : IMailService
         }
     }
 
-    private static string BuildForgotPasswordEmail(string token, string email)
+    private static string BuildForgotPasswordEmail(string token, string email,string type)
     {
         var encodedToken = Uri.EscapeDataString(token);
 
         var resetLink = $"http://localhost:5173/reset-password?email={email}&token={encodedToken}";
+
+        if(type.Equals("Customer")) resetLink = $"http://localhost:5174/reset-password?email={email}&token={encodedToken}";
 
         return $@"
         <h2>Xin chào</h2>

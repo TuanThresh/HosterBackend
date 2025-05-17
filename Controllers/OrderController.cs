@@ -40,10 +40,10 @@ IMailService mailService) : BaseApiController
             var domainProductToBuy = await domainProductRepository.GetByIdAsync(createOrderDto.DomainProductId);
 
             var customer = await customerRepository.GetByIdAsync(customerId,x => x.HasType,x => x.Orders);
-    
-            if(createOrderDto.DiscountCode != null)
+
+            if (createOrderDto.DiscountCode != null)
             {
-                var discount = await discountRepository.GetByPropertyAsync(x => x.DiscountCode.Equals(createOrderDto.DiscountCode));
+                var discount = await discountRepository.GetByPropertyAsync(x => x.DiscountCode.Equals(createOrderDto.DiscountCode)) ?? throw new Exception("Không tìm thấy mã giảm giá");
 
                 if(discount.ExpiredAt < DateTime.Now) return BadRequest("Mã giảm giá đã hết hạn");
 
@@ -223,7 +223,7 @@ IMailService mailService) : BaseApiController
         }
         else
         {
-            var registeredDomain = await registeredDomainRepository.GetByPropertyAsync(x => x.FullDomainName == $"{orderToUpdate.DomainFirstPart}.{domainProduct.DomainName}");
+            var registeredDomain = await registeredDomainRepository.GetByPropertyAsync(x => x.FullDomainName == $"{orderToUpdate.DomainFirstPart}.{domainProduct.DomainName}") ?? throw new Exception("Không tìm thấy miền đã đăng ký");
 
             registeredDomain = RenewRegisteredDomain(registeredDomain,orderToUpdate.DurationByMonth);
 

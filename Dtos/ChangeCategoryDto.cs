@@ -1,11 +1,10 @@
-namespace HosterBackend.Data.Entities;
+namespace HosterBackend.Dtos;
 
-public class Category
+public class ChangeCategoryDto
 {
-    public int Id { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public List<New> HasNews { get; set; } = [];
+    public int MyProperty { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }

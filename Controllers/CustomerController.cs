@@ -183,7 +183,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
                 await passwordResetTokenRepository.AddAsync(token);
                 }
 
-                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token);
+                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token,"Customer");
             }
             catch (Exception ex)
             {

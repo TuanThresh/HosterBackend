@@ -7,6 +7,8 @@ public class Employee
     public int Id { get; set; }
     public required string Email { get; set; }
     public EmployeeStatusEnum Status { get; set; } = EmployeeStatusEnum.ChoXacThuc;
+    public required string Address { get; set; }
+    public required string PhoneNumber { get; set; }
     public required string Name { get; set; }
     public byte[] PasswordHash { get; set; } = [];
     public byte[] PasswordSalt { get; set; } = [];

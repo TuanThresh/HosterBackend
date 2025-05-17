@@ -32,6 +32,10 @@ namespace HosterBackend.Controllers
 
             if (existedEmployee == null) return BadRequest("Tên tài khoản sai");
 
+            if(existedEmployee.Status == Data.Enums.EmployeeStatusEnum.ChoXacThuc) return BadRequest("Tài khoản chưa được xác thực");
+            
+            if(existedEmployee.Status == Data.Enums.EmployeeStatusEnum.Khoa) return BadRequest("Tài khoản đã bị khóa");
+
             using var hmac = new HMACSHA512(existedEmployee.PasswordSalt);
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
@@ -95,7 +99,7 @@ namespace HosterBackend.Controllers
 
                 createEmployeeDto.PasswordSalt = hmac.Key;
 
-                var employee = await employeeRepository.AddAsync(createEmployeeDto, ["Email", "Name"]);
+                var employee = await employeeRepository.AddAsync(createEmployeeDto, ["Email", "Name","Address"]);
 
                 var createdEmployee = await employeeRepository.GetByIdAsync(employee.Id, x => x.HasRoles);
 
@@ -130,7 +134,7 @@ namespace HosterBackend.Controllers
 
                 using var hmac = new HMACSHA512();
 
-                await employeeRepository.UpdateAsync(id, existedEmployee);
+                await employeeRepository.UpdateAsync(id, existedEmployee,["Name", "PhoneNumber", "Address"]);
             }
             catch (Exception ex)
             {
@@ -204,7 +208,7 @@ namespace HosterBackend.Controllers
                 await passwordResetTokenRepository.AddAsync(token);
                 }
 
-                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token);
+                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token,"Employee");
             }
             catch (Exception ex)
             {
@@ -253,6 +257,22 @@ namespace HosterBackend.Controllers
             }
 
             return Ok("Đặt lại mật khẩu thành công");
+        }
+        [HttpGet("{name}")]
+        public async Task<ActionResult<EmployeeDto>> GetEmployeeByName(string name)
+        {
+            EmployeeDto employee;
+
+            try
+            {
+                employee = await employeeRepository.GetDtoByPropertyAsync<EmployeeDto>(x => x.Name.Equals(name));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
+            return Ok(employee);
         }
         
     }

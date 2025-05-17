@@ -8,5 +8,5 @@ public interface IMailService
     public Task SendCreatedEmployee(string subject, Employee employee, string password);
     public Task SendExpiredDomainEmailAsync(string toEmail, string subject, RegisteredDomain registeredDomain);
     public Task SendDiscountCodeEmailAsync(string toEmail, string subject, Discount discount);
-    public Task SendForgotPasswordEmaiAsync(string toEmail, string subject, string token);
+    public Task SendForgotPasswordEmaiAsync(string toEmail, string subject, string token,string type);
 }
