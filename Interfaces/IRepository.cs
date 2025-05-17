@@ -4,7 +4,7 @@ public interface IRepository<T> where T : class
 {
     Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
     Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes);
-    Task<T> GetByPropertyAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes);
+    Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes);
     Task<IEnumerable<T>> GetAllByPropertyAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes);
 
     Task<IEnumerable<TDto>> GetAllDtoByPropertyAsync<TDto>(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes) where TDto : class;

@@ -188,24 +188,29 @@ namespace HosterBackend.Controllers
 
                 if (employee == null) return BadRequest("Không tìm thấy người dùng với email");
 
-                var token = new PasswordResetToken
+                var token = await passwordResetTokenRepository.GetByPropertyAsync(x => x.Email == forgotPasswordDto.Email
+                            && !x.IsUsed
+                            && x.ExpiredAt > DateTime.Now);
+
+                if (token == null)
                 {
-                    Email = forgotPasswordDto.Email,
-                    Token = Guid.NewGuid().ToString(),
-                    ExpiredAt = DateTime.UtcNow.AddMinutes(30)
-                };
+                    token = new PasswordResetToken
+                    {
+                        Email = forgotPasswordDto.Email,
+                        Token = Guid.NewGuid().ToString(),
+                        ExpiredAt = DateTime.Now.AddMinutes(30)
+                    };
 
                 await passwordResetTokenRepository.AddAsync(token);
+                }
 
                 await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return BadRequest(ex);
             }
-
-            
 
             return Ok("Đã gửi hướng dẫn mật khẩu tới email");
 
@@ -229,6 +234,10 @@ namespace HosterBackend.Controllers
 
                 if (token == null)
                     return BadRequest("Token không hợp lệ hoặc đã hết hạn");
+                
+                token.IsUsed = true;
+
+                await passwordResetTokenRepository.UpdateAsync(token.Id, token);
 
                 using var hmac = new HMACSHA512();
 

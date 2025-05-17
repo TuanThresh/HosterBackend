@@ -298,7 +298,7 @@ public class MailService : IMailService
     {
         var encodedToken = Uri.EscapeDataString(token);
 
-        var resetLink = $"https://yourfrontend.com/reset-password?email={email}&token={encodedToken}";
+        var resetLink = $"http://localhost:5173/reset-password?email={email}&token={encodedToken}";
 
         return $@"
         <h2>Xin chào</h2>

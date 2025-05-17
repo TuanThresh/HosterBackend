@@ -144,11 +144,11 @@ public class Repository<T> : IRepository<T> where T : class
         return (TProp)entityProperty;
     }
 
-    public async Task<T> GetByPropertyAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes)
+    public async Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes)
     {
         var query = ExtendEntity(_dbSet,includes);
         
-        return await query.FirstOrDefaultAsync(predicate) ?? throw new Exception($"Không tìm thấy {typeof(T).Name}");
+        return await query.FirstOrDefaultAsync(predicate) ;
     }
     public async Task<IEnumerable<TDto>> GetAllDtoByPropertyAsync<TDto>(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes) where TDto : class
     {
