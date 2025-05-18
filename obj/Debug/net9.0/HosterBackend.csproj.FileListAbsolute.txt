@@ -175,3 +175,4 @@ D:\Hoster v2\HosterBackend\bin\Debug\net9.0\MailKit.dll
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\MimeKit.dll
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\CategoryData.json
 D:\Hoster v2\HosterBackend\bin\Debug\net9.0\Data\NewData.json
+D:\Hoster v2\HosterBackend\bin\Debug\net9.0\HosterBackend.staticwebassets.runtime.json

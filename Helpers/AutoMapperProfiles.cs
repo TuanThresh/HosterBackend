@@ -45,7 +45,9 @@ public class AutoMapperProfiles : Profile
         CreateMap<RegisterCustomerDto, Customer>();
         CreateMap<ChangeCategoryDto, Category>();
         CreateMap<Category, CategoryDto>();
-        CreateMap<ChangeNewDto, NewDto>();
-        CreateMap<New, NewDto>();
+        CreateMap<ChangeNewDto, New>();
+        CreateMap<New, NewDto>()
+            .ForMember(d => d.Category, o => o.MapFrom(s => s.Category.Name.ToString()))
+            .ForMember(d => d.ImageUrl, o => o.MapFrom(s => "http://localhost:5246" + s.ImageUrl));
     }
 }

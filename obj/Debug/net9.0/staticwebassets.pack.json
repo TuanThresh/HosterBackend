@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg",
+      "PackagePath": "staticwebassets\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg"
+    },
+    {
+      "Id": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
+      "PackagePath": "staticwebassets\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.HosterBackend.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.HosterBackend.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.build.HosterBackend.props",
+      "PackagePath": "build\\HosterBackend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildMultiTargeting.HosterBackend.props",
+      "PackagePath": "buildMultiTargeting\\HosterBackend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildTransitive.HosterBackend.props",
+      "PackagePath": "buildTransitive\\HosterBackend.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

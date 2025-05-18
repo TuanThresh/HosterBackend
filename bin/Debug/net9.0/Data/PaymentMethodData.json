@@ -1,13 +1,8 @@
 [
     {
-        "PaymentMethodName": "Thẻ tín dụng",
+        "PaymentMethodName": "Tiền mặt",
         "CreatedAt": "2025-05-03T10:00:00",
         "UpdatedAt": "2025-05-03T10:00:00"
-    },
-    {
-        "PaymentMethodName": "Ví điện tử Momo",
-        "CreatedAt": "2025-04-15T08:30:00",
-        "UpdatedAt": "2025-04-15T08:30:00"
     },
     {
         "PaymentMethodName": "Chuyển khoản ngân hàng",

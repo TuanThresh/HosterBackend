@@ -32,9 +32,9 @@ namespace HosterBackend.Controllers
 
             if (existedEmployee == null) return BadRequest("Tên tài khoản sai");
 
-            if(existedEmployee.Status == Data.Enums.EmployeeStatusEnum.ChoXacThuc) return BadRequest("Tài khoản chưa được xác thực");
-            
-            if(existedEmployee.Status == Data.Enums.EmployeeStatusEnum.Khoa) return BadRequest("Tài khoản đã bị khóa");
+            if (existedEmployee.Status == Data.Enums.EmployeeStatusEnum.ChoXacThuc) return BadRequest("Tài khoản chưa được xác thực");
+
+            if (existedEmployee.Status == Data.Enums.EmployeeStatusEnum.Khoa) return BadRequest("Tài khoản đã bị khóa");
 
             using var hmac = new HMACSHA512(existedEmployee.PasswordSalt);
 
@@ -99,7 +99,7 @@ namespace HosterBackend.Controllers
 
                 createEmployeeDto.PasswordSalt = hmac.Key;
 
-                var employee = await employeeRepository.AddAsync(createEmployeeDto, ["Email", "Name","Address"]);
+                var employee = await employeeRepository.AddAsync(createEmployeeDto, ["Email", "Name", "Address"]);
 
                 var createdEmployee = await employeeRepository.GetByIdAsync(employee.Id, x => x.HasRoles);
 
@@ -134,7 +134,7 @@ namespace HosterBackend.Controllers
 
                 using var hmac = new HMACSHA512();
 
-                await employeeRepository.UpdateAsync(id, existedEmployee,["Name", "PhoneNumber", "Address"]);
+                await employeeRepository.UpdateAsync(id, existedEmployee, ["Name", "PhoneNumber", "Address"]);
             }
             catch (Exception ex)
             {
@@ -205,10 +205,10 @@ namespace HosterBackend.Controllers
                         ExpiredAt = DateTime.Now.AddMinutes(30)
                     };
 
-                await passwordResetTokenRepository.AddAsync(token);
+                    await passwordResetTokenRepository.AddAsync(token);
                 }
 
-                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token,"Employee");
+                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token, "Employee");
             }
             catch (Exception ex)
             {
@@ -238,7 +238,7 @@ namespace HosterBackend.Controllers
 
                 if (token == null)
                     return BadRequest("Token không hợp lệ hoặc đã hết hạn");
-                
+
                 token.IsUsed = true;
 
                 await passwordResetTokenRepository.UpdateAsync(token.Id, token);
@@ -274,6 +274,37 @@ namespace HosterBackend.Controllers
 
             return Ok(employee);
         }
-        
+        [HttpPut("change_password")]
+        public async Task<ActionResult> ChangePassword( [FromBody] ChangePasswordDto changePasswordDto)
+        {
+            try
+            {
+                var nameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của nhân viên");
+
+                var id = int.Parse(nameIndentifier.Value);
+
+                var employee = await employeeRepository.GetByIdAsync(id);
+
+                using var hmac = new HMACSHA512(employee.PasswordSalt);
+
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.CurrentPassword));
+
+                if (computedHash.Length != employee.PasswordHash.Length) return BadRequest("Mật khẩu hiện tại sai");
+
+                for (int i = 0; i < employee.PasswordHash.Length; i++)
+                {
+                    if (employee.PasswordHash[i] != computedHash[i]) return BadRequest("Mật khẩu hiện tại sai");
+                }
+
+                employee.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
+
+                employee.PasswordSalt = hmac.Key;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            return Ok("Sửa mật khẩu thành công");
+        }
     }
 }

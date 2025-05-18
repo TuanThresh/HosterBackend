@@ -6,6 +6,7 @@ using HosterBackend.Repositories;
 using HosterBackend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +70,11 @@ app.UseCors("AllowAll");
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "news-images")),
+    RequestPath = "/news-images"
+});
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try

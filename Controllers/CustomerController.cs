@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
 
-public class CustomerController(ICustomerRepository customerRepository, ITokenService tokenService, IPasswordResetTokenRepository passwordResetTokenRepository,IMailService mailService) : BaseApiController
+public class CustomerController(ICustomerRepository customerRepository, ITokenService tokenService, IPasswordResetTokenRepository passwordResetTokenRepository, IMailService mailService) : BaseApiController
 {
 
     [HttpPost("login")]
@@ -159,78 +159,110 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         return await customerRepository.GetDtoByIdAsync<CustomerDto>(customerId);
     }
     [HttpPost("forgot_password")]
-        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+    public async Task<ActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+    {
+        try
         {
-            try
+            var customer = await customerRepository.GetByPropertyAsync(x => x.Email.Equals(forgotPasswordDto.Email));
+
+            if (customer == null) return BadRequest("Không tìm thấy người dùng với email");
+
+            var token = await passwordResetTokenRepository.GetByPropertyAsync(x => x.Email == forgotPasswordDto.Email
+                        && !x.IsUsed
+                        && x.ExpiredAt > DateTime.Now);
+
+            if (token == null)
             {
-                var customer = await customerRepository.GetByPropertyAsync(x => x.Email.Equals(forgotPasswordDto.Email));
-
-                if (customer == null) return BadRequest("Không tìm thấy người dùng với email");
-
-                var token = await passwordResetTokenRepository.GetByPropertyAsync(x => x.Email == forgotPasswordDto.Email
-                            && !x.IsUsed
-                            && x.ExpiredAt > DateTime.Now);
-
-                if (token == null)
+                token = new PasswordResetToken
                 {
-                    token = new PasswordResetToken
-                    {
-                        Email = forgotPasswordDto.Email,
-                        Token = Guid.NewGuid().ToString(),
-                        ExpiredAt = DateTime.Now.AddMinutes(30)
-                    };
+                    Email = forgotPasswordDto.Email,
+                    Token = Guid.NewGuid().ToString(),
+                    ExpiredAt = DateTime.Now.AddMinutes(30)
+                };
 
                 await passwordResetTokenRepository.AddAsync(token);
-                }
-
-                await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token,"Customer");
-            }
-            catch (Exception ex)
-            {
-
-                return BadRequest(ex);
             }
 
-            return Ok("Đã gửi hướng dẫn mật khẩu tới email");
-
+            await mailService.SendForgotPasswordEmaiAsync(forgotPasswordDto.Email, "Quên mật khẩu", token.Token, "Customer");
         }
-        [HttpPost("reset_password")]
-        public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+        catch (Exception ex)
+        {
+
+            return BadRequest(ex);
+        }
+
+        return Ok("Đã gửi hướng dẫn mật khẩu tới email");
+
+    }
+    [HttpPost("reset_password")]
+    public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        try
+        {
+            var customer = await customerRepository.GetByPropertyAsync(x => x.Email.Equals(resetPasswordDto.Email));
+
+            if (customer == null) return BadRequest("Không tìm thấy người dùng với email");
+
+            if (resetPasswordDto.NewPassword != resetPasswordDto.ConfirmPassword)
+                return BadRequest("Mật khẩu mới không khớp.");
+
+            var token = await passwordResetTokenRepository.GetByPropertyAsync(x => x.Email == resetPasswordDto.Email
+                        && x.Token == resetPasswordDto.Token
+                        && !x.IsUsed
+                        && x.ExpiredAt > DateTime.Now);
+
+            if (token == null)
+                return BadRequest("Token không hợp lệ hoặc đã hết hạn");
+
+            token.IsUsed = true;
+
+            await passwordResetTokenRepository.UpdateAsync(token.Id, token);
+
+            using var hmac = new HMACSHA512();
+
+            customer.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(resetPasswordDto.NewPassword));
+
+            customer.PasswordSalt = hmac.Key;
+
+            await customerRepository.UpdateAsync(customer.Id, customer);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
+
+        return Ok("Đặt lại mật khẩu thành công");
+    }
+        [HttpPut("change_password")]
+        public async Task<ActionResult> ChangePassword( [FromBody] ChangePasswordDto changePasswordDto)
         {
             try
             {
-                var customer = await customerRepository.GetByPropertyAsync(x => x.Email.Equals(resetPasswordDto.Email));
+                var nameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
 
-                if (customer == null) return BadRequest("Không tìm thấy người dùng với email");
+                var id = int.Parse(nameIndentifier.Value);
 
-                if (resetPasswordDto.NewPassword != resetPasswordDto.ConfirmPassword)
-                    return BadRequest("Mật khẩu mới không khớp.");
+                var customer= await customerRepository.GetByIdAsync(id);
 
-                var token = await passwordResetTokenRepository.GetByPropertyAsync(x => x.Email == resetPasswordDto.Email
-                            && x.Token == resetPasswordDto.Token
-                            && !x.IsUsed
-                            && x.ExpiredAt > DateTime.Now);
+                using var hmac = new HMACSHA512(customer.PasswordSalt);
 
-                if (token == null)
-                    return BadRequest("Token không hợp lệ hoặc đã hết hạn");
-                
-                token.IsUsed = true;
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.CurrentPassword));
 
-                await passwordResetTokenRepository.UpdateAsync(token.Id, token);
+                if (computedHash.Length != customer.PasswordHash.Length) return BadRequest("Mật khẩu hiện tại sai");
 
-                using var hmac = new HMACSHA512();
+                for (int i = 0; i < customer.PasswordHash.Length; i++)
+                {
+                    if (customer.PasswordHash[i] != computedHash[i]) return BadRequest("Mật khẩu hiện tại sai");
+                }
 
-                customer.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(resetPasswordDto.NewPassword));
+                customer.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
 
                 customer.PasswordSalt = hmac.Key;
-
-                await customerRepository.UpdateAsync(customer.Id, customer);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             }
-
-            return Ok("Đặt lại mật khẩu thành công");
+            return Ok("Sửa mật khẩu thành công");
         }
 }
