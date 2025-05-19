@@ -31,25 +31,27 @@ public class DomainAccountController(IDomainAccountRepository domainAccountRepos
         return Ok(domainAccount);
     }
 
-    [HttpPost]
-    public async Task<ActionResult> CreateDomainAccount(ChangeDomainAccountDto domainAccountDto)
-    {
-        try
-        {
-            using var hmac  = new HMACSHA512();
+    // [HttpPost]
+    // public async Task<ActionResult> CreateDomainAccount(ChangeDomainAccountDto domainAccountDto)
+    // {
+    //     try
+    //     {
+    //         using var hmac  = new HMACSHA512();
 
-            domainAccountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(domainAccountDto.Password));
+    //         if (domainAccountDto.Password == null) return BadRequest("");
 
-            domainAccountDto.PasswordSalt = hmac.Key;
+    //         domainAccountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(domainAccountDto.Password));
 
-            await domainAccountRepository.AddAsync(domainAccountDto);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex);
-        }
-        return Ok("Tạo tài khoản domain thành công");
-    }
+    //         domainAccountDto.PasswordSalt = hmac.Key;
+
+    //         await domainAccountRepository.AddAsync(domainAccountDto);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return BadRequest(ex);
+    //     }
+    //     return Ok("Tạo tài khoản domain thành công");
+    // }
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateDomainAccount(int id,[FromBody]ChangeDomainAccountDto domainAccountDto)
@@ -58,9 +60,9 @@ public class DomainAccountController(IDomainAccountRepository domainAccountRepos
         {
             using var hmac  = new HMACSHA512();
 
-            domainAccountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(domainAccountDto.Password));
+            // domainAccountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(domainAccountDto.Password));
 
-            domainAccountDto.PasswordSalt = hmac.Key;
+            // domainAccountDto.PasswordSalt = hmac.Key;
             
             await domainAccountRepository.UpdateAsync(id,domainAccountDto);
         }

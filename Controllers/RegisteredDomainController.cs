@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
 [Route("api/registered_domain")]
-public class RegisteredDomainController(IRegisteredDomainRepository registeredDomainRepository,IDomainProductRepository domainProductRepository) : BaseApiController
+public class RegisteredDomainController(IRegisteredDomainRepository registeredDomainRepository,IDomainProductRepository domainProductRepository,IOrderRepository orderRepository) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<RegisteredDomainDto>>> GetRegisteredDomains()
@@ -35,8 +35,11 @@ public class RegisteredDomainController(IRegisteredDomainRepository registeredDo
         var domainProduct = await domainProductRepository.GetByIdAsync(checkDomainDto.DomainProductId);
 
         var fullDomainName = $"{checkDomainDto.DomainFirstPart.ToString().ToLower()}.{domainProduct.DomainName.ToString().ToLower()}";
+        
+        if(await orderRepository.CheckExistsAsync(x => x.DomainProductId == checkDomainDto.DomainProductId && x.DomainFirstPart.Equals(checkDomainDto.DomainFirstPart.ToString().ToLower()))) return Ok("Tên miền đã tồn tại");
 
-        if(await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName == fullDomainName)) return Ok("Tên miền đã tồn tại");
+
+        if (await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName == fullDomainName)) return Ok("Tên miền đã tồn tại");
 
         return Ok("Tên miền chưa tồn tại");
     }

@@ -87,7 +87,7 @@ namespace HosterBackend.Controllers
         }
         [Authorize(Roles = "Quản trị viên")]
         [HttpPost]
-        public async Task<ActionResult> CreateEmployee(ChangeEmployeeDto createEmployeeDto)
+        public async Task<ActionResult> CreateEmployee(CreateEmployeeDto createEmployeeDto)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace HosterBackend.Controllers
         }
         [Authorize(Roles = "Quản trị viên")]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateEmployee(int id, [FromBody] ChangeEmployeeDto updateEmployeeDto)
+        public async Task<ActionResult> UpdateEmployee(int id, [FromBody] UpdateEmployeeDto updateEmployeeDto)
         {
             try
             {
@@ -265,7 +265,7 @@ namespace HosterBackend.Controllers
 
             try
             {
-                employee = await employeeRepository.GetDtoByPropertyAsync<EmployeeDto>(x => x.Name.Equals(name));
+                employee = await employeeRepository.GetDtoByPropertyAsync<EmployeeDto>(x => x.Name.Equals(name.ToLower()));
             }
             catch (Exception ex)
             {
@@ -275,7 +275,7 @@ namespace HosterBackend.Controllers
             return Ok(employee);
         }
         [HttpPut("change_password")]
-        public async Task<ActionResult> ChangePassword( [FromBody] ChangePasswordDto changePasswordDto)
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
             try
             {
@@ -305,6 +305,15 @@ namespace HosterBackend.Controllers
                 return BadRequest(ex);
             }
             return Ok("Sửa mật khẩu thành công");
+        }
+        [HttpPost("statistic")]
+        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto)
+        {
+            var employees = await employeeRepository.GetAllByPropertyAsync(x =>
+                DateOnly.FromDateTime(x.CreatedAt) >= statisticConditionDto.From &&
+                DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To);
+
+            return Ok(employees.Count());
         }
     }
 }

@@ -265,4 +265,13 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
             }
             return Ok("Sửa mật khẩu thành công");
         }
+        [HttpPost("statistic")]
+        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto)
+        {
+            var customers = await customerRepository.GetAllByPropertyAsync(x =>
+                DateOnly.FromDateTime(x.CreatedAt) >= statisticConditionDto.From &&
+                DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To);
+
+            return Ok(customers.Count());
+        }
 }

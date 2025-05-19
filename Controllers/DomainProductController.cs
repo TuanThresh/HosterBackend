@@ -4,6 +4,7 @@ using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
+
 [Route("api/domain_product")]
 public class DomainProductController(IDomainProductRepository domainProductRepository) : BaseApiController
 {
@@ -17,7 +18,7 @@ public class DomainProductController(IDomainProductRepository domainProductRepos
     public async Task<ActionResult<DomainProductDto>> GetDomainProduct(int id)
     {
         DomainProductDto domainProduct;
-        
+
         try
         {
             domainProduct = await domainProductRepository.GetDtoByIdAsync<DomainProductDto>(id);
@@ -44,11 +45,11 @@ public class DomainProductController(IDomainProductRepository domainProductRepos
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult> UpdateDomainProduct(int id,[FromBody]ChangeDomainProductDto domainProductDto)
+    public async Task<ActionResult> UpdateDomainProduct(int id, [FromBody] ChangeDomainProductDto domainProductDto)
     {
         try
         {
-            await domainProductRepository.UpdateAsync(id,domainProductDto);
+            await domainProductRepository.UpdateAsync(id, domainProductDto);
         }
         catch (Exception ex)
         {
@@ -70,4 +71,14 @@ public class DomainProductController(IDomainProductRepository domainProductRepos
         }
         return Ok("Xóa sản phẩm domain thành công");
     }
+    
+    [HttpPost("statistic")]
+        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto)
+        {
+            var domainProducts = await domainProductRepository.GetAllByPropertyAsync(x =>
+                DateOnly.FromDateTime(x.CreatedAt) >= statisticConditionDto.From &&
+                DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To);
+
+            return Ok(domainProducts.Count());
+        }
 }

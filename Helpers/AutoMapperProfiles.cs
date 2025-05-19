@@ -13,7 +13,9 @@ public class AutoMapperProfiles : Profile
         CreateMap<Employee, EmployeeDto>()
             .ForMember(d => d.HasRoles, o => o.MapFrom(s => s.HasRoles.Select(x => x.Role.RoleName)))
             .ForMember(d => d.Status, o => o.MapFrom(s => ((EmployeeStatusEnum)s.Status).ToString()));
-        CreateMap<ChangeEmployeeDto, Employee>()
+        CreateMap<CreateEmployeeDto, Employee>()
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name));
+            CreateMap<UpdateEmployeeDto, Employee>()
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Name));
         CreateMap<Role, RoleDto>();
         CreateMap<ChangeRoleDto, Role>();
