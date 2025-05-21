@@ -9,8 +9,6 @@ public class UpdateEmployeeDto
     public required string PhoneNumber { get; set; }
     public required string Email { get; set; }
     // public string? Password { get; set; }
-    public byte[]? PasswordHash { get; set; }
-    public byte[]? PasswordSalt { get; set; }
     public EmployeeStatusEnum Status { get; set; } = EmployeeStatusEnum.ChoXacThuc;
     // public List<int> Roles { get; set; } = [];
     public DateTime UpdatedAt { get; set; } = DateTime.Now;

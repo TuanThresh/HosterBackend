@@ -44,13 +44,13 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         };
 
     }
-    [Authorize]
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers()
     {
         return Ok(await customerRepository.GetAllDtoAsync<CustomerDto>());
     }
-    [Authorize(Roles = "Quản trị viên")]
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerDto>> GetCustomer(int id)
     {
@@ -99,7 +99,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         );
 
     }
-    [Authorize(Roles = "Quản trị viên,Khách hàng")]
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateCustomer(int id, [FromBody] ChangeCustomerDto updateCustomerDto)
     {
@@ -117,7 +117,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         }
         return Ok("Sửa khách hàng thành công");
     }
-    [Authorize(Roles = "Quản trị viên")]
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCustomer(int id)
     {
@@ -131,7 +131,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         }
         return Ok("Xóa khách hàng thành công");
     }
-    [Authorize(Roles = "Quản trị viên")]
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpGet("{name}")]
     public async Task<ActionResult<CustomerDto>> GetCustomerByName(string name)
     {
@@ -148,7 +148,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
 
         return Ok(customer);
     }
-    [Authorize(Roles = "Khách hàng")]
+    [Authorize]
     [HttpGet("profile")]
     public async Task<ActionResult<CustomerDto>> GetCustomerProfile()
     {
@@ -158,6 +158,8 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
 
         return await customerRepository.GetDtoByIdAsync<CustomerDto>(customerId);
     }
+    [Authorize]
+
     [HttpPost("forgot_password")]
     public async Task<ActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
     {
@@ -194,6 +196,8 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         return Ok("Đã gửi hướng dẫn mật khẩu tới email");
 
     }
+    [Authorize]
+
     [HttpPost("reset_password")]
     public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
     {
@@ -233,45 +237,75 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
 
         return Ok("Đặt lại mật khẩu thành công");
     }
+        [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
         [HttpPut("change_password")]
         public async Task<ActionResult> ChangePassword( [FromBody] ChangePasswordDto changePasswordDto)
         {
-            try
+        try
+        {
+            var nameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
+
+            var id = int.Parse(nameIndentifier.Value);
+
+            var customer = await customerRepository.GetByIdAsync(id);
+
+            using var hmac = new HMACSHA512(customer.PasswordSalt);
+
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.CurrentPassword));
+
+            if (computedHash.Length != customer.PasswordHash.Length) return BadRequest("Mật khẩu hiện tại sai");
+
+            for (int i = 0; i < customer.PasswordHash.Length; i++)
             {
-                var nameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
-
-                var id = int.Parse(nameIndentifier.Value);
-
-                var customer= await customerRepository.GetByIdAsync(id);
-
-                using var hmac = new HMACSHA512(customer.PasswordSalt);
-
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.CurrentPassword));
-
-                if (computedHash.Length != customer.PasswordHash.Length) return BadRequest("Mật khẩu hiện tại sai");
-
-                for (int i = 0; i < customer.PasswordHash.Length; i++)
-                {
-                    if (customer.PasswordHash[i] != computedHash[i]) return BadRequest("Mật khẩu hiện tại sai");
-                }
-
-                customer.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
-
-                customer.PasswordSalt = hmac.Key;
+                if (customer.PasswordHash[i] != computedHash[i]) return BadRequest("Mật khẩu hiện tại sai");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
+
+            customer.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
+
+            customer.PasswordSalt = hmac.Key;
+
+            await customerRepository.UpdateAsync(customer.Id, customer);
             }
+        catch (Exception ex)
+        {
+            return BadRequest(ex);
+        }
             return Ok("Sửa mật khẩu thành công");
         }
         [HttpPost("statistic")]
-        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto)
+        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto,[FromQuery] string CustomerTypeId = "1")
         {
             var customers = await customerRepository.GetAllByPropertyAsync(x =>
                 DateOnly.FromDateTime(x.CreatedAt) >= statisticConditionDto.From &&
-                DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To);
+                DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To &&
+                x.CustomerTypeId == int.Parse(CustomerTypeId));
 
             return Ok(customers.Count());
         }
-}
+        [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
+
+        [HttpGet("overview")]
+        public async Task<ActionResult> GetOverview([FromQuery] string CustomerTypeId = "1")
+        {
+            List<int> counts = [];
+            for (int i = 1; i <= 12; i++)
+            {
+
+                var startDate = new DateOnly(2025, i, 1);
+
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+
+                var customers = await customerRepository.GetAllByPropertyAsync(x =>
+                DateOnly.FromDateTime(x.CreatedAt) >= startDate &&
+                DateOnly.FromDateTime(x.CreatedAt) <= endDate &&
+                x.CustomerTypeId == int.Parse(CustomerTypeId));
+
+                counts.Add(customers.Count());
+
+            }
+
+            return Ok(counts);
+        }
+    }

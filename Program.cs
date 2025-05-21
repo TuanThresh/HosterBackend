@@ -90,7 +90,10 @@ try
     await Seed.SeedData<PaymentMethod>(context, "Data/PaymentMethodData.json");
     await Seed.SeedData<Discount>(context, "Data/DiscountData.json");
     await Seed.SeedData<Category>(context, "Data/CategoryData.json");
-    await Seed.SeedData<New>(context,"Data/NewData.json");
+    await Seed.SeedData<New>(context, "Data/NewData.json");
+    await Seed.SeedData<Order>(context, "Data/OrderData.json");
+    await Seed.SeedData<RegisteredDomain>(context,"Data/RegisteredDomainData.json");
+    
     
     
 

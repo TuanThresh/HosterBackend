@@ -3,7 +3,6 @@ using HosterBackend.Data.Entities;
 public class RegisteredDomain
 {
     public int Id { get; set; }
-
     public required string FullDomainName { get; set; }
     public int DomainAccountId { get; set; }
     public DomainAccount DomainAccount { get; set; } = null!;

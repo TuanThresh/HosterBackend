@@ -3,9 +3,12 @@ using System.Text;
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
 using HosterBackend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
+[Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 [Route("api/domain_account")]
 public class DomainAccountController(IDomainAccountRepository domainAccountRepository) : BaseApiController
 {

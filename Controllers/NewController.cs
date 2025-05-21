@@ -1,9 +1,13 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
 using HosterBackend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
+
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
+
 public class NewController(INewRepository newRepository) : BaseApiController
 {
     [HttpGet]

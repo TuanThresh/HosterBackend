@@ -1,31 +1,192 @@
 [
   {
     "Percentage": 10,
-    "CustomerTypeId" : 3,
-    "DiscountCode": "WELCOME10-12/2025",
-    "Description": "Giảm 10% cho khách hàng mới - Hết hạn: 12/2025",
-    "ExpiredAt": "2025-12-31T23:59:59",
+    "CustomerTypeId": 3,
+    "DiscountCode": "WELCOME10-01/2025",
+    "Description": "Giảm 10% cho khách hàng mới - Hết hạn: 01/2025",
+    "ExpiredAt": "2025-01-31T23:59:59",
     "Orders": [],
-    "CreatedAt": "2025-05-13T00:00:00",
-    "UpdatedAt": "2025-05-13T00:00:00"
+    "CreatedAt": "2025-01-01T00:00:00",
+    "UpdatedAt": "2025-01-01T00:00:00"
   },
   {
     "Percentage": 15,
-    "CustomerTypeId" : 2,
+    "CustomerTypeId": 2,
+    "DiscountCode": "LOYAL15-02/2025",
+    "Description": "Giảm 15% cho khách hàng thân thiết - Hết hạn: 02/2025",
+    "ExpiredAt": "2025-02-28T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-01-06T00:00:00",
+    "UpdatedAt": "2025-01-06T00:00:00"
+  },
+  {
+    "Percentage": 20,
+    "DiscountCode": "SUMMER20-03/2025",
+    "Description": "Ưu đãi đầu xuân - Giảm 20% toàn bộ đơn hàng - Hết hạn: 03/2025",
+    "ExpiredAt": "2025-03-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-01-11T00:00:00",
+    "UpdatedAt": "2025-01-11T00:00:00"
+  },
+  {
+    "Percentage": 25,
+    "CustomerTypeId": 1,
+    "DiscountCode": "VIP25-04/2025",
+    "Description": "Giảm 25% cho thành viên VIP - Hết hạn: 04/2025",
+    "ExpiredAt": "2025-04-30T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-01-16T00:00:00",
+    "UpdatedAt": "2025-01-16T00:00:00"
+  },
+  {
+    "Percentage": 5,
+    "DiscountCode": "SAVE5-05/2025",
+    "Description": "Tiết kiệm 5% cho mọi đơn hàng - Hết hạn: 05/2025",
+    "ExpiredAt": "2025-05-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-01-21T00:00:00",
+    "UpdatedAt": "2025-01-21T00:00:00"
+  },
+  {
+    "Percentage": 30,
+    "CustomerTypeId": 2,
+    "DiscountCode": "FLASH30-06/2025",
+    "Description": "Flash Sale: Giảm 30% nhanh tay - Hết hạn: 06/2025",
+    "ExpiredAt": "2025-06-30T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-01-26T00:00:00",
+    "UpdatedAt": "2025-01-26T00:00:00"
+  },
+  {
+    "Percentage": 20,
+    "DiscountCode": "HOTDEAL20-07/2025",
+    "Description": "Giảm 20% trong tháng 7 - Hết hạn: 07/2025",
+    "ExpiredAt": "2025-07-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-01-31T00:00:00",
+    "UpdatedAt": "2025-01-31T00:00:00"
+  },
+  {
+    "Percentage": 8,
+    "DiscountCode": "AUTUMN8-08/2025",
+    "Description": "Ưu đãi thu sang 8% - Hết hạn: 08/2025",
+    "ExpiredAt": "2025-08-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-02-05T00:00:00",
+    "UpdatedAt": "2025-02-05T00:00:00"
+  },
+  {
+    "Percentage": 12,
+    "DiscountCode": "SEPT12-09/2025",
+    "Description": "Giảm 12% dịp khai trường - Hết hạn: 09/2025",
+    "ExpiredAt": "2025-09-30T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-02-10T00:00:00",
+    "UpdatedAt": "2025-02-10T00:00:00"
+  },
+  {
+    "Percentage": 18,
+    "CustomerTypeId": 3,
+    "DiscountCode": "FALL18-10/2025",
+    "Description": "Giảm 18% mùa thu - Hết hạn: 10/2025",
+    "ExpiredAt": "2025-10-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-02-15T00:00:00",
+    "UpdatedAt": "2025-02-15T00:00:00"
+  },
+  {
+    "Percentage": 15,
+    "CustomerTypeId": 2,
     "DiscountCode": "LOYAL15-11/2025",
     "Description": "Giảm 15% cho khách hàng thân thiết - Hết hạn: 11/2025",
     "ExpiredAt": "2025-11-30T23:59:59",
     "Orders": [],
-    "CreatedAt": "2025-05-13T00:00:00",
-    "UpdatedAt": "2025-05-13T00:00:00"
+    "CreatedAt": "2025-02-20T00:00:00",
+    "UpdatedAt": "2025-02-20T00:00:00"
   },
   {
-    "Percentage": 20,
-    "DiscountCode": "SUMMER20-07/2025",
-    "Description": "Ưu đãi mùa hè - Giảm 20% toàn bộ đơn hàng - Hết hạn: 07/2025",
-    "ExpiredAt": "2025-07-31T23:59:59",
+    "Percentage": 10,
+    "CustomerTypeId": 3,
+    "DiscountCode": "WELCOME10-12/2025",
+    "Description": "Giảm 10% cho khách hàng mới - Hết hạn: 12/2025",
+    "ExpiredAt": "2025-12-31T23:59:59",
     "Orders": [],
-    "CreatedAt": "2025-05-13T00:00:00",
-    "UpdatedAt": "2025-05-13T00:00:00"
+    "CreatedAt": "2025-02-25T00:00:00",
+    "UpdatedAt": "2025-02-25T00:00:00"
+  },
+  {
+    "Percentage": 22,
+    "DiscountCode": "HOLIDAY22-01/2026",
+    "Description": "Ưu đãi lễ Tết - Giảm 22% - Hết hạn: 01/2026",
+    "ExpiredAt": "2026-01-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-03-02T00:00:00",
+    "UpdatedAt": "2025-03-02T00:00:00"
+  },
+  {
+    "Percentage": 7,
+    "CustomerTypeId": 1,
+    "DiscountCode": "SMALL7-02/2026",
+    "Description": "Giảm nhẹ 7% cho đơn nhỏ - Hết hạn: 02/2026",
+    "ExpiredAt": "2026-02-28T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-03-07T00:00:00",
+    "UpdatedAt": "2025-03-07T00:00:00"
+  },
+  {
+    "Percentage": 35,
+    "CustomerTypeId": 2,
+    "DiscountCode": "BIGSALE35-03/2026",
+    "Description": "Giảm 35% đại tiệc sale - Hết hạn: 03/2026",
+    "ExpiredAt": "2026-03-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-03-12T00:00:00",
+    "UpdatedAt": "2025-03-12T00:00:00"
+  },
+  {
+    "Percentage": 16,
+    "DiscountCode": "SPRING16-04/2026",
+    "Description": "Ưu đãi mùa xuân - Giảm 16% - Hết hạn: 04/2026",
+    "ExpiredAt": "2026-04-30T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-03-17T00:00:00",
+    "UpdatedAt": "2025-03-17T00:00:00"
+  },
+  {
+    "Percentage": 14,
+    "CustomerTypeId": 3,
+    "DiscountCode": "LUCKY14-05/2026",
+    "Description": "Mã may mắn 14% - Hết hạn: 05/2026",
+    "ExpiredAt": "2026-05-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-03-22T00:00:00",
+    "UpdatedAt": "2025-03-22T00:00:00"
+  },
+  {
+    "Percentage": 28,
+    "DiscountCode": "HAPPY28-06/2026",
+    "Description": "Chúc mừng hè - Giảm 28% - Hết hạn: 06/2026",
+    "ExpiredAt": "2026-06-30T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-03-27T00:00:00",
+    "UpdatedAt": "2025-03-27T00:00:00"
+  },
+  {
+    "Percentage": 9,
+    "DiscountCode": "JULY9-07/2026",
+    "Description": "Khuyến mãi tháng 7 - Giảm 9% - Hết hạn: 07/2026",
+    "ExpiredAt": "2026-07-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-04-01T00:00:00",
+    "UpdatedAt": "2025-04-01T00:00:00"
+  },
+  {
+    "Percentage": 19,
+    "DiscountCode": "AUG19-08/2026",
+    "Description": "Giảm 19% tháng 8 - Hết hạn: 08/2026",
+    "ExpiredAt": "2026-08-31T23:59:59",
+    "Orders": [],
+    "CreatedAt": "2025-04-06T00:00:00",
+    "UpdatedAt": "2025-04-06T00:00:00"
   }
 ]

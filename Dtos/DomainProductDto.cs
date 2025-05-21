@@ -7,7 +7,6 @@ public class DomainProductDto
 {
     public int Id { get; set; }
     public required string DomainName { get; set; }
-    public int PriceStart { get; set; }
     public required string DomainType { get; set; }
     public int Price { get; set; }
     // public List<RegisteredDomainDto> RegisteredDomains { get; set; } = [];

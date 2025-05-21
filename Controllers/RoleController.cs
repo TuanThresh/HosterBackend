@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
+[Authorize(Roles = "Quản trị viên")]
 public class RoleController(IRoleRepository roleRepository) : BaseApiController
 {
-    [Authorize(Roles = "Quản trị viên")]
+    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
     {
@@ -17,13 +18,11 @@ public class RoleController(IRoleRepository roleRepository) : BaseApiController
 
         return Ok(roles);
     }
-    [Authorize(Roles = "Quản trị viên")]
     [HttpGet("{id:int}")]
     public async Task<RoleDto> GetRole(int id)
     {
         return await roleRepository.GetDtoByIdAsync<RoleDto>(id);
     }
-    [Authorize(Roles = "Quản trị viên")]
     [HttpPost]
     public async Task<ActionResult> CreateRole(ChangeRoleDto createRoleDto)
     {
@@ -38,7 +37,6 @@ public class RoleController(IRoleRepository roleRepository) : BaseApiController
 
         return Ok("Tạo vai trò thành công");
     }
-    [Authorize(Roles = "Quản trị viên")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateRole(int id,[FromBody] ChangeRoleDto updateRoleDto)
     {
@@ -52,7 +50,6 @@ public class RoleController(IRoleRepository roleRepository) : BaseApiController
         }
         return Ok("Sửa vai trò thành công");
     }
-    [Authorize(Roles = "Quản trị viên")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteRole(int id)
     {

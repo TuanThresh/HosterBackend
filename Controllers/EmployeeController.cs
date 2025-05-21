@@ -9,6 +9,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using HosterBackend.Data;
 using HosterBackend.Data.Entities;
+using HosterBackend.Data.Enums;
 using HosterBackend.Dtos;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -67,7 +68,12 @@ namespace HosterBackend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
         {
-            return Ok(await employeeRepository.GetAllDtoAsync<EmployeeDto>());
+
+            var employeeNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
+
+            var employeeId = int.Parse(employeeNameIndentifier.Value);
+
+            return Ok(await employeeRepository.GetAllDtoByPropertyAsync<EmployeeDto>(x => x.Id != employeeId));
         }
         [Authorize(Roles = "Quản trị viên")]
         [HttpGet("{id:int}")]
@@ -299,6 +305,8 @@ namespace HosterBackend.Controllers
                 employee.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(changePasswordDto.NewPassword));
 
                 employee.PasswordSalt = hmac.Key;
+
+                await employeeRepository.UpdateAsync(employee.Id,employee);
             }
             catch (Exception ex)
             {
@@ -307,13 +315,36 @@ namespace HosterBackend.Controllers
             return Ok("Sửa mật khẩu thành công");
         }
         [HttpPost("statistic")]
-        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto)
+        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto,[FromQuery] EmployeeStatusEnum employeeStatusEnum = EmployeeStatusEnum.KichHoat)
         {
             var employees = await employeeRepository.GetAllByPropertyAsync(x =>
                 DateOnly.FromDateTime(x.CreatedAt) >= statisticConditionDto.From &&
-                DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To);
+                DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To &&
+                x.Status == employeeStatusEnum);
 
             return Ok(employees.Count());
+        }
+        [HttpGet("overview")]
+        public async Task<ActionResult> GetOverview([FromQuery] EmployeeStatusEnum employeeStatusEnum = EmployeeStatusEnum.KichHoat)
+        {
+            List<int> counts = [];
+            for (int i = 1; i <= 12; i++)
+            {
+
+                var startDate = new DateOnly(2025, i, 1);
+
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+
+                var employees = await employeeRepository.GetAllByPropertyAsync(x =>
+                DateOnly.FromDateTime(x.CreatedAt) >= startDate &&
+                DateOnly.FromDateTime(x.CreatedAt) <= endDate &&
+                x.Status == employeeStatusEnum);
+
+                counts.Add(employees.Count());
+
+            }
+
+            return Ok(counts);
         }
     }
 }

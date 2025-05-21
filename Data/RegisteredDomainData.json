@@ -1,0 +1,22 @@
+[
+    {
+  "FullDomainName": "bestchoice.com",
+  "DomainAccountId": 1,
+  "DomainProductId": 8,
+  "RegisteredAt": "2025-01-05T14:20:00",
+  "ExpiredAt": "2027-01-05T14:20:00",
+  "OrderId": 2,
+  "CreatedAt": "2025-01-05T14:20:00",
+  "UpdatedAt": "2025-01-05T14:20:00"
+},
+{
+  "FullDomainName": "starshine.vn",
+  "DomainAccountId": 3,
+  "DomainProductId": 1,
+  "RegisteredAt": "2025-01-11T11:30:00",
+  "ExpiredAt": "2026-01-11T11:30:00",
+  "OrderId": 3,
+  "CreatedAt": "2025-01-11T11:30:00",
+  "UpdatedAt": "2025-01-11T11:30:00"
+}
+]

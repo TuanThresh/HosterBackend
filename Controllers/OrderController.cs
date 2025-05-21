@@ -119,11 +119,12 @@ IMailService mailService) : BaseApiController
         return Unauthorized("Không có quyền truy cập");
     }
 
-    [Authorize]
+        [Authorize ]
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders()
     {
-        if (User.Claims.Where(x => x.Type == ClaimTypes.Role).Any(c => c.Value == "Quản trị viên"))
+        if (User.Claims.Where(x => x.Type == ClaimTypes.Role).Any(c => c.Value == "Nhân viên phòng kỹ thuật hỗ trợ khách hàng"))
         {
             return Ok(await orderRepository.GetAllDtoAsync<OrderDto>());
         }
@@ -137,6 +138,7 @@ IMailService mailService) : BaseApiController
         }
         return Unauthorized("Không có quyền truy cập");
     }
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteOrder(int id)
     {
@@ -151,11 +153,22 @@ IMailService mailService) : BaseApiController
         return Ok("Xóa đơn hàng thành công");
     }
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
     public async Task<ActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto updateOrderDto)
     {
         try
         {
             var orderToUpdate = await orderRepository.GetByIdAsync(id, x => x.Customer, x => x.DomainProduct, x => x.PaymentMethod);
+
+            if (updateOrderDto.Status == OrderStatusEnum.Cancelled)
+            {
+                orderToUpdate.Status = OrderStatusEnum.Cancelled;
+                
+                await orderRepository.UpdateAsync(id, updateOrderDto);
+
+                return Ok("Đơn hàng hủy thành công");
+            }
 
             if (orderToUpdate.Status == OrderStatusEnum.Cancelled) return BadRequest("Đơn hàng đã bị hủy");
 
@@ -254,9 +267,10 @@ IMailService mailService) : BaseApiController
 
         await registeredDomainRepository.AddAsync(newRegisteredDomain);
     }
-    
-    [HttpPost("statistic")]
-        public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto)
+    [Authorize]
+
+    [HttpPost("total_revenue")]
+        public async Task<ActionResult> GetTotalRevenue(StatisticConditionDto statisticConditionDto)
         {
             var orders = await orderRepository.GetAllByPropertyAsync(x =>
                 DateOnly.FromDateTime(x.CreatedAt) >= statisticConditionDto.From &&
@@ -264,6 +278,39 @@ IMailService mailService) : BaseApiController
                 x.Status == OrderStatusEnum.Paid);
 
             return Ok(orders.Select(x => x.TotalPrice).Sum());
+        }
+        [Authorize]
+    [HttpPost("statistic")]
+    
+    public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto, [FromQuery] OrderStatusEnum orderStatusEnum = OrderStatusEnum.Pending)
+    {
+        var orders = await orderRepository.GetAllByPropertyAsync(x =>
+            DateOnly.FromDateTime(x.CreatedAt) >= statisticConditionDto.From &&
+            DateOnly.FromDateTime(x.CreatedAt) <= statisticConditionDto.To &&
+            x.Status == orderStatusEnum);
+
+        return Ok(orders.Count());
+    }
+        [HttpGet("overview")]
+        public async Task<ActionResult> GetOverview([FromQuery] OrderStatusEnum orderStatusEnum = OrderStatusEnum.Pending)
+        {
+            List<int> counts = [];
+            for (int i = 1; i <= 12; i++)
+            {
+
+                var startDate = new DateOnly(2025, i, 1);
+
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+
+                var orders = await orderRepository.GetAllByPropertyAsync(x =>
+                DateOnly.FromDateTime(x.CreatedAt) >= startDate &&
+                DateOnly.FromDateTime(x.CreatedAt) <= endDate &&
+                x.Status == orderStatusEnum);
+
+                counts.Add(orders.Count());
+
+            }
+            return Ok(counts);
         }
 
 }

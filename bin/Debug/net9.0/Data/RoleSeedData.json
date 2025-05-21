@@ -1,8 +1,14 @@
 [
     {
-        "RoleName" : "Nhân viên"
+        "RoleName" : "Nhân viên phòng kỹ thuật hỗ trợ khách hàng"
     },
     {
         "RoleName" : "Quản trị viên"
+    },
+    {
+        "RoleName" : "Nhân viên phòng kinh doanh và tiếp thị"
+    },
+    {
+        "RoleName" : "Nhân viên phòng tài chính và kế toán"
     }
 ]

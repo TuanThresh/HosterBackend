@@ -1,10 +1,14 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
 using HosterBackend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
+
 [Route("api/customer_type")]
+[Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 public class CustomerTypeController(ICustomerTypeRepository customerTypeRepository) : BaseApiController
 {
     

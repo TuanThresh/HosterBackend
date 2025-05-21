@@ -1,3 +1,5 @@
+using HosterBackend.Data.Enums;
+
 namespace HosterBackend.Dtos;
 
 public class StatisticConditionDto

@@ -1,10 +1,14 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
 using HosterBackend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
+
 [Route("api/registered_domain")]
+[Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 public class RegisteredDomainController(IRegisteredDomainRepository registeredDomainRepository,IDomainProductRepository domainProductRepository,IOrderRepository orderRepository) : BaseApiController
 {
     [HttpGet]
