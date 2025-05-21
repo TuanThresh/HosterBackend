@@ -153,19 +153,26 @@ IMailService mailService) : BaseApiController
         return Ok("Xóa đơn hàng thành công");
     }
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 
     public async Task<ActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto updateOrderDto)
     {
         try
         {
             var orderToUpdate = await orderRepository.GetByIdAsync(id, x => x.Customer, x => x.DomainProduct, x => x.PaymentMethod);
+            
+            var customer = await customerRepository.GetByIdAsync(orderToUpdate.CustomerId);
+
+            var domainProduct = await domainProductRepository.GetByIdAsync(orderToUpdate.DomainProductId);
 
             if (updateOrderDto.Status == OrderStatusEnum.Cancelled)
             {
                 orderToUpdate.Status = OrderStatusEnum.Cancelled;
-                
+
                 await orderRepository.UpdateAsync(id, updateOrderDto);
+
+                await mailService.SendEmailAsync(orderToUpdate.Customer.Email, "Mua tên miền", orderToUpdate);
+
 
                 return Ok("Đơn hàng hủy thành công");
             }
@@ -178,9 +185,7 @@ IMailService mailService) : BaseApiController
 
             await orderRepository.UpdateAsync(id, updateOrderDto);
 
-            var customer = await customerRepository.GetByIdAsync(orderToUpdate.CustomerId);
-
-            var domainProduct = await domainProductRepository.GetByIdAsync(orderToUpdate.DomainProductId);
+            
 
             if (await registeredDomainRepository.CheckExistsAsync(x => x.FullDomainName == $"{orderToUpdate.DomainFirstPart}.{domainProduct.DomainName}") == false)
             {

@@ -159,7 +159,6 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         return await customerRepository.GetDtoByIdAsync<CustomerDto>(customerId);
     }
     [Authorize]
-
     [HttpPost("forgot_password")]
     public async Task<ActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
     {
@@ -197,7 +196,6 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
 
     }
     [Authorize]
-
     [HttpPost("reset_password")]
     public async Task<ActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
     {

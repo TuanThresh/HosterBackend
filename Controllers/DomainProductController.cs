@@ -12,7 +12,7 @@ namespace HosterBackend.Controllers;
 [Route("api/domain_product")]
 public class DomainProductController(IDomainProductRepository domainProductRepository) : BaseApiController
 {
-        // [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<DomainProductDto>>> GetDomainProducts()

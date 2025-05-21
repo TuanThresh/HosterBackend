@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace HosterBackend.Controllers;
 
 [Route("api/registered_domain")]
-[Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 
 public class RegisteredDomainController(IRegisteredDomainRepository registeredDomainRepository,IDomainProductRepository domainProductRepository,IOrderRepository orderRepository) : BaseApiController
 {
+    [Authorize(Roles = "Khách hàng")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<RegisteredDomainDto>>> GetRegisteredDomains()
     {
@@ -32,7 +33,7 @@ public class RegisteredDomainController(IRegisteredDomainRepository registeredDo
         }
         return Ok(registeredDomain);
     }
-
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpGet("check_domain")]
     public async Task<ActionResult<RegisteredDomainDto>> CheckDomain(CheckDomainDto checkDomainDto)
     {
@@ -63,7 +64,7 @@ public class RegisteredDomainController(IRegisteredDomainRepository registeredDo
     //     }
     //     return Ok("Sửa sản phẩm domain thành công");
     // }
-
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteRegisteredDomain(int id)
     {

@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HosterBackend.Controllers;
 
-    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
+
 
 public class NewController(INewRepository newRepository) : BaseApiController
 {
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Khách hàng")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<NewDto>>> GetNews()
     {
@@ -31,7 +32,7 @@ public class NewController(INewRepository newRepository) : BaseApiController
         }
         return Ok(New);
     }
-
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
     [HttpPost]
     public async Task<ActionResult> CreateNew([FromForm]ChangeNewDto newDto)
     {
@@ -70,7 +71,7 @@ public class NewController(INewRepository newRepository) : BaseApiController
         }
         return Ok("Tạo tin tức thành công");
     }
-
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateNew(int id,[FromBody]ChangeNewDto newDto)
     {
@@ -112,7 +113,7 @@ public class NewController(INewRepository newRepository) : BaseApiController
         }
         return Ok("Sửa tin tức thành công");
     }
-
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteNew(int id)
     {

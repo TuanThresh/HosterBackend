@@ -6844,7 +6844,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\lehoa\\.nuget\\packages\\": {}
+    "C:\\Users\\Tuan\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -6852,11 +6852,11 @@
       "projectUniqueName": "D:\\HosterBackend\\HosterBackend.csproj",
       "projectName": "HosterBackend",
       "projectPath": "D:\\HosterBackend\\HosterBackend.csproj",
-      "packagesPath": "C:\\Users\\lehoa\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Tuan\\.nuget\\packages\\",
       "outputPath": "D:\\HosterBackend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\lehoa\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Tuan\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -6880,7 +6880,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -6946,7 +6946,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.106/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
