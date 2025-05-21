@@ -17,7 +17,7 @@ public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepos
     {
         return Ok(await paymentMethodRepository.GetAllDtoAsync<PaymentMethodDto>());
     }
-    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PaymentMethodDto>> GetPaymentMethod(int id)
@@ -34,7 +34,7 @@ public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepos
         }
         return Ok(PaymentMethod);
     }
-    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 
 
     [HttpPost]
