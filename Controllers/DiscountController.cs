@@ -87,7 +87,8 @@ public class DiscountController(IDiscountRepository discountRepository, IMailSer
         }
         return Ok("Xóa mã giảm giá thành công");
     }
-    [Authorize]
+            [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
     
     [HttpPost("statistic")]
         public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto,[FromQuery] string CustomerTypeId = "0")
@@ -99,7 +100,8 @@ public class DiscountController(IDiscountRepository discountRepository, IMailSer
 
             return Ok(discounts.Count());
         }
-    [Authorize]
+            [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
         [HttpGet("overview")]
         public async Task<ActionResult> GetOverview([FromQuery] string CustomerTypeId = "0")
         {

@@ -99,7 +99,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         );
 
     }
-    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+    [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng, Khách hàng")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateCustomer(int id, [FromBody] ChangeCustomerDto updateCustomerDto)
     {
@@ -237,7 +237,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
 
         return Ok("Đặt lại mật khẩu thành công");
     }
-        [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+        [Authorize]
 
         [HttpPut("change_password")]
         public async Task<ActionResult> ChangePassword( [FromBody] ChangePasswordDto changePasswordDto)
@@ -273,6 +273,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
         }
             return Ok("Sửa mật khẩu thành công");
         }
+        [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
         [HttpPost("statistic")]
         public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto,[FromQuery] string CustomerTypeId = "1")
         {
@@ -283,7 +284,7 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
 
             return Ok(customers.Count());
         }
-        [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+        [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
 
 
         [HttpGet("overview")]

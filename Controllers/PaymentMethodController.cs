@@ -7,15 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace HosterBackend.Controllers;
 
 [Route("api/payment_method")]
-[Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 
 public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepository) : BaseApiController
 {
+    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PaymentMethodDto>>> GetPaymentMethods()
     {
         return Ok(await paymentMethodRepository.GetAllDtoAsync<PaymentMethodDto>());
     }
+    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PaymentMethodDto>> GetPaymentMethod(int id)
@@ -32,6 +34,8 @@ public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepos
         }
         return Ok(PaymentMethod);
     }
+    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 
     [HttpPost]
     public async Task<ActionResult> CreatePaymentMethod(ChangePaymentMethodDto PaymentMethodDto)
@@ -46,6 +50,8 @@ public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepos
         }
         return Ok("Tạo phương thức thanh toán thành công");
     }
+    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdatePaymentMethod(int id,[FromBody]ChangePaymentMethodDto PaymentMethodDto)
@@ -60,6 +66,8 @@ public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepos
         }
         return Ok("Sửa phương thức thanh toán thành công");
     }
+    [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeletePaymentMethod(int id)

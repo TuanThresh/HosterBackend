@@ -12,13 +12,14 @@ namespace HosterBackend.Controllers;
 [Route("api/domain_product")]
 public class DomainProductController(IDomainProductRepository domainProductRepository) : BaseApiController
 {
-    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+        // [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<DomainProductDto>>> GetDomainProducts()
     {
         return Ok(await domainProductRepository.GetAllDtoAsync<DomainProductDto>());
     }
-    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<DomainProductDto>> GetDomainProduct(int id)
@@ -80,7 +81,8 @@ public class DomainProductController(IDomainProductRepository domainProductRepos
         }
         return Ok("Xóa sản phẩm domain thành công");
     }
-    [Authorize]
+            [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
     
     [HttpPost("statistic")]
         public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto,[FromQuery] DomainTypeEnum domainTypeEnum= DomainTypeEnum.VietNam)
@@ -92,7 +94,8 @@ public class DomainProductController(IDomainProductRepository domainProductRepos
 
             return Ok(employees.Count());
         }
-    [Authorize]
+            [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
         [HttpGet("overview")]
         public async Task<ActionResult> GetOverview([FromQuery] DomainTypeEnum domainTypeEnum = DomainTypeEnum.VietNam)
         {

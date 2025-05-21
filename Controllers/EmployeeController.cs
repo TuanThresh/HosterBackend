@@ -314,6 +314,8 @@ namespace HosterBackend.Controllers
             }
             return Ok("Sửa mật khẩu thành công");
         }
+        [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
         [HttpPost("statistic")]
         public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto,[FromQuery] EmployeeStatusEnum employeeStatusEnum = EmployeeStatusEnum.KichHoat)
         {
@@ -324,6 +326,8 @@ namespace HosterBackend.Controllers
 
             return Ok(employees.Count());
         }
+        [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
         [HttpGet("overview")]
         public async Task<ActionResult> GetOverview([FromQuery] EmployeeStatusEnum employeeStatusEnum = EmployeeStatusEnum.KichHoat)
         {

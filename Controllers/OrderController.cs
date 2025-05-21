@@ -279,7 +279,8 @@ IMailService mailService) : BaseApiController
 
             return Ok(orders.Select(x => x.TotalPrice).Sum());
         }
-        [Authorize]
+                [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
     [HttpPost("statistic")]
     
     public async Task<ActionResult> GetStatistic(StatisticConditionDto statisticConditionDto, [FromQuery] OrderStatusEnum orderStatusEnum = OrderStatusEnum.Pending)
@@ -291,6 +292,8 @@ IMailService mailService) : BaseApiController
 
         return Ok(orders.Count());
     }
+        [Authorize (Roles = "Nhân viên phòng tài chính và kế toán")]
+
         [HttpGet("overview")]
         public async Task<ActionResult> GetOverview([FromQuery] OrderStatusEnum orderStatusEnum = OrderStatusEnum.Pending)
         {

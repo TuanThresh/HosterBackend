@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "/NbuxxYDNJrwlYmlKvd2TZOQu4sYYfyHJYeWyhVZx3s=",
+  "Hash": "OyhEYOOpn3WmG5YCoHd85ENtKB8xR3xBJkiciCFOO7o=",
   "Source": "HosterBackend",
   "BasePath": "_content/HosterBackend",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "HosterBackend\\wwwroot",
       "Source": "HosterBackend",
-      "ContentRoot": "D:\\Hoster v2\\HosterBackend\\wwwroot\\",
+      "ContentRoot": "D:\\HosterBackend\\wwwroot\\",
       "BasePath": "_content/HosterBackend",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg",
+      "Identity": "D:\\HosterBackend\\wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg",
       "SourceId": "HosterBackend",
       "SourceType": "Discovered",
-      "ContentRoot": "D:\\Hoster v2\\HosterBackend\\wwwroot\\",
+      "ContentRoot": "D:\\HosterBackend\\wwwroot\\",
       "BasePath": "_content/HosterBackend",
       "RelativePath": "news-images/d50df990-c87b-4446-828d-7a371f652ae3#[.{fingerprint}]?.jpg",
       "AssetKind": "All",
@@ -38,10 +38,10 @@
       "OriginalItemSpec": "wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg"
     },
     {
-      "Identity": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
+      "Identity": "D:\\HosterBackend\\wwwroot\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
       "SourceId": "HosterBackend",
       "SourceType": "Discovered",
-      "ContentRoot": "D:\\Hoster v2\\HosterBackend\\wwwroot\\",
+      "ContentRoot": "D:\\HosterBackend\\wwwroot\\",
       "BasePath": "_content/HosterBackend",
       "RelativePath": "news-images/ea86e292-3076-45b6-99a8-fc511d43016b#[.{fingerprint}]?.jpg",
       "AssetKind": "All",
@@ -62,7 +62,7 @@
   "Endpoints": [
     {
       "Route": "news-images/d50df990-c87b-4446-828d-7a371f652ae3.8w0wihb206.jpg",
-      "AssetFile": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg",
+      "AssetFile": "D:\\HosterBackend\\wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -83,7 +83,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 18 May 2025 01:08:45 GMT"
+          "Value": "Wed, 21 May 2025 07:11:08 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -107,7 +107,7 @@
     },
     {
       "Route": "news-images/d50df990-c87b-4446-828d-7a371f652ae3.jpg",
-      "AssetFile": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg",
+      "AssetFile": "D:\\HosterBackend\\wwwroot\\news-images\\d50df990-c87b-4446-828d-7a371f652ae3.jpg",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -128,7 +128,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 18 May 2025 01:08:45 GMT"
+          "Value": "Wed, 21 May 2025 07:11:08 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -144,7 +144,7 @@
     },
     {
       "Route": "news-images/ea86e292-3076-45b6-99a8-fc511d43016b.8w0wihb206.jpg",
-      "AssetFile": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
+      "AssetFile": "D:\\HosterBackend\\wwwroot\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -165,7 +165,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 18 May 2025 01:32:26 GMT"
+          "Value": "Wed, 21 May 2025 07:11:08 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -189,7 +189,7 @@
     },
     {
       "Route": "news-images/ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
-      "AssetFile": "D:\\Hoster v2\\HosterBackend\\wwwroot\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
+      "AssetFile": "D:\\HosterBackend\\wwwroot\\news-images\\ea86e292-3076-45b6-99a8-fc511d43016b.jpg",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -210,7 +210,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 18 May 2025 01:32:26 GMT"
+          "Value": "Wed, 21 May 2025 07:11:08 GMT"
         },
         {
           "Name": "Cache-Control",
