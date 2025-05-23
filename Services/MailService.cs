@@ -102,7 +102,7 @@ public class MailService : IMailService
                     <p>Xin chào <strong>{order.Customer.Name}</strong>,</p>
                     <p>Đơn hàng của bạn với tên miền <strong>{domain}</strong> đã được thanh toán thành công.</p>
                     <p>Tài khoản quản trị tên miền: <strong>{username}</strong></p>
-                    <p>Tài khoản quản trị tên miền: <strong>{password}</strong></p>
+                    <p>Mật khẩu quản trị tên miền: <strong>{password}</strong></p>
                     <p><strong>Ngày thanh toán:</strong> {created}</p>
                 " : $@"
                     <p>Xin chào <strong>{order.Customer.Name}</strong>,</p>

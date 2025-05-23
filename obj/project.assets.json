@@ -6849,11 +6849,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\HosterBackend\\HosterBackend.csproj",
+      "projectUniqueName": "D:\\Backend\\HosterBackend.csproj",
       "projectName": "HosterBackend",
-      "projectPath": "D:\\HosterBackend\\HosterBackend.csproj",
+      "projectPath": "D:\\Backend\\HosterBackend.csproj",
       "packagesPath": "C:\\Users\\Tuan\\.nuget\\packages\\",
-      "outputPath": "D:\\HosterBackend\\obj\\",
+      "outputPath": "D:\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Tuan\\AppData\\Roaming\\NuGet\\NuGet.Config"

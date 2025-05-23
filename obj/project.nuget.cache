@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JtCBade7+0w=",
+  "dgSpecHash": "Gd07O3Q+tN8=",
   "success": true,
-  "projectFilePath": "D:\\HosterBackend\\HosterBackend.csproj",
+  "projectFilePath": "D:\\Backend\\HosterBackend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Tuan\\.nuget\\packages\\automapper\\14.0.0\\automapper.14.0.0.nupkg.sha512",
     "C:\\Users\\Tuan\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",

@@ -103,10 +103,6 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateCustomer(int id, [FromBody] ChangeCustomerDto updateCustomerDto)
     {
-
-        var customer = await customerRepository.GetByIdAsync(id);
-
-        updateCustomerDto.CustomerTypeId = customer.CustomerTypeId;
         try
         {
             await customerRepository.UpdateAsync(id, updateCustomerDto, ["Name", "PhoneNumber", "Address"]);
