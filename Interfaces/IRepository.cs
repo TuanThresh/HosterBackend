@@ -1,5 +1,7 @@
 namespace HosterBackend.Interfaces;
 using System.Linq.Expressions;
+using HosterBackend.Helpers;
+
 public interface IRepository<T> where T : class
 {
     Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
@@ -7,7 +9,7 @@ public interface IRepository<T> where T : class
     Task<T?> GetByPropertyAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes);
     Task<IEnumerable<T>> GetAllByPropertyAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes);
 
-    Task<IEnumerable<TDto>> GetAllDtoByPropertyAsync<TDto>(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes) where TDto : class;
+    Task<PagedList<TDto>> GetAllDtoByPropertyAsync<TDto>(PagedListParams pagedListParams,Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes) where TDto : class;
     Task<TDto> GetDtoByPropertyAsync<TDto>(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes) where TDto : class;
     Task<bool> CheckExistsAsync(Expression<Func<T,bool>> predicate);
 
@@ -15,6 +17,6 @@ public interface IRepository<T> where T : class
     Task UpdateAsync<TDto>(int id,TDto entity,params string[] conditions) where TDto : class;
     Task DeleteAsync(int id);
 
-    Task<IEnumerable<TDto>> GetAllDtoAsync<TDto>(params Expression<Func<T, object>>[] includes) where TDto : class;
+    Task<PagedList<TDto>> GetAllDtoAsync<TDto>(PagedListParams pagedListParams,params Expression<Func<T, object>>[] includes) where TDto : class;
     Task<TDto> GetDtoByIdAsync<TDto>(int id, params Expression<Func<T, object>>[] includes) where TDto : class;
 }

@@ -2,10 +2,11 @@ using System.Security.Cryptography;
 using System.Text;
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
 
@@ -13,9 +14,14 @@ namespace HosterBackend.Controllers;
 public class DomainAccountController(IDomainAccountRepository domainAccountRepository) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<DomainAccountDto>>> GetDomainAccounts()
+    public async Task<ActionResult<IEnumerable<DomainAccountDto>>> GetDomainAccounts([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await domainAccountRepository.GetAllDtoAsync<DomainAccountDto>());
+        var domainAccounts = await domainAccountRepository.GetAllDtoAsync<DomainAccountDto>(pagedListParams);
+
+        Response.AddPaginationHeader(domainAccounts);
+        
+
+        return Ok(domainAccounts);
     }
 
     [HttpGet("{id:int}")]

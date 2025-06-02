@@ -1,5 +1,6 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Data.Enums;
+using HosterBackend.Helpers;
 
 namespace HosterBackend.Dtos;
 

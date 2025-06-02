@@ -1,0 +1,92 @@
+[
+  {
+    "CustomerTypeId": 1,
+    "Name": "Nguyen Van A",
+    "Email": "nguyenvana@example.com",
+    "Address": "123 Le Loi, HCM",
+    "PhoneNumber": "0909123456",
+    "CreatedAt": "2025-01-05T08:00:00",
+    "UpdatedAt": "2025-01-05T08:00:00"
+  },
+  {
+    "CustomerTypeId": 2,
+    "Name": "Tran Thi B",
+    "Email": "tranthib@example.com",
+    "Address": "45 Tran Hung Dao, HN",
+    "PhoneNumber": "0912123456",
+    "CreatedAt": "2025-01-12T08:00:00",
+    "UpdatedAt": "2025-01-12T08:00:00"
+  },
+  {
+    "CustomerTypeId": 1,
+    "Name": "Le Van C",
+    "Email": "levanc@example.com",
+    "Address": "78 Hai Ba Trung, Hue",
+    "PhoneNumber": "0909345678",
+    "CreatedAt": "2025-01-19T08:00:00",
+    "UpdatedAt": "2025-01-19T08:00:00"
+  },
+  {
+    "CustomerTypeId": 2,
+    "Name": "Pham D",
+    "Email": "phamd@example.com",
+    "Address": "22 Le Duan, Da Nang",
+    "PhoneNumber": "0921345678",
+    "CreatedAt": "2025-01-26T08:00:00",
+    "UpdatedAt": "2025-01-26T08:00:00"
+  },
+  {
+    "CustomerTypeId": 1,
+    "Name": "Do Thi E",
+    "Email": "dothie@example.com",
+    "Address": "33 Nguyen Hue, HCM",
+    "PhoneNumber": "0909988776",
+    "CreatedAt": "2025-02-02T08:00:00",
+    "UpdatedAt": "2025-02-02T08:00:00"
+  },
+  {
+    "CustomerTypeId": 1,
+    "Name": "Hoang Van F",
+    "Email": "hoangf@example.com",
+    "Address": "99 Phan Chu Trinh, HN",
+    "PhoneNumber": "0911223344",
+    "CreatedAt": "2025-02-09T08:00:00",
+    "UpdatedAt": "2025-02-09T08:00:00"
+  },
+  {
+    "CustomerTypeId": 2,
+    "Name": "Công ty TNHH ABC",
+    "Email": "contact@abc.com",
+    "Address": "100 Nguyen Trai, HCM",
+    "PhoneNumber": "02812345678",
+    "CreatedAt": "2025-02-16T08:00:00",
+    "UpdatedAt": "2025-02-16T08:00:00"
+  },
+  {
+    "CustomerTypeId": 1,
+    "Name": "Nguyen Thi G",
+    "Email": "nguyenthig@example.com",
+    "Address": "42 Ly Thuong Kiet, HN",
+    "PhoneNumber": "0909111222",
+    "CreatedAt": "2025-02-23T08:00:00",
+    "UpdatedAt": "2025-02-23T08:00:00"
+  },
+  {
+    "CustomerTypeId": 2,
+    "Name": "Công ty XYZ",
+    "Email": "admin@xyz.vn",
+    "Address": "111 Cach Mang Thang 8, HCM",
+    "PhoneNumber": "02887654321",
+    "CreatedAt": "2025-03-01T08:00:00",
+    "UpdatedAt": "2025-03-01T08:00:00"
+  },
+  {
+    "CustomerTypeId": 1,
+    "Name": "Le Thi H",
+    "Email": "lethih@example.com",
+    "Address": "50 Pasteur, HCM",
+    "PhoneNumber": "0912333444",
+    "CreatedAt": "2025-03-08T08:00:00",
+    "UpdatedAt": "2025-03-08T08:00:00"
+  }
+]

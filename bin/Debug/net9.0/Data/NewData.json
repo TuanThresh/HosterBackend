@@ -1,0 +1,52 @@
+[
+  {
+    "categoryId": 1,
+    "title": "Tên miền .com vẫn là lựa chọn số 1",
+    "content": "Với hơn 200 triệu tên miền đã đăng ký, .com tiếp tục là đuôi tên miền phổ biến nhất thế giới.",
+    "imageUrl": "/news-images/domain-com.jpg",
+    "fileName": "domain-com.jpg",
+    "filePath": "wwwroot/news-images/domain-com.jpg",
+    "createdAt": "2025-05-10T08:30:00Z",
+    "updatedAt": "2025-05-10T08:30:00Z"
+  },
+  {
+    "categoryId": 2,
+    "title": "Gần 1.000 domain .vn sắp hết hạn trong tháng 6",
+    "content": "Đây là cơ hội để bạn tìm thấy tên miền đẹp đang chuẩn bị bị thu hồi hoặc mở bán lại.",
+    "imageUrl": "/news-images/expiring-domains.jpg",
+    "fileName": "expiring-domains.jpg",
+    "filePath": "wwwroot/news-images/expiring-domains.jpg",
+    "createdAt": "2025-05-12T10:00:00Z",
+    "updatedAt": "2025-05-12T10:00:00Z"
+  },
+  {
+    "categoryId": 3,
+    "title": "Top 5 tên miền .tech đáng mua trong năm nay",
+    "content": "Nếu bạn là một startup công nghệ, đừng bỏ qua các tên miền như build.tech, future.tech, hoặc innovator.tech.",
+    "imageUrl": "/news-images/tech-domains.jpg",
+    "fileName": "tech-domains.jpg",
+    "filePath": "wwwroot/news-images/tech-domains.jpg",
+    "createdAt": "2025-05-13T14:15:00Z",
+    "updatedAt": "2025-05-13T14:15:00Z"
+  },
+  {
+    "categoryId": 2,
+    "title": "Tên miền .vn tăng trưởng mạnh trong quý 1",
+    "content": "Số lượng đăng ký mới tên miền .vn đã tăng 15% so với cùng kỳ năm trước.",
+    "imageUrl": "/news-images/vn-growth.jpg",
+    "fileName": "vn-growth.jpg",
+    "filePath": "wwwroot/news-images/vn-growth.jpg",
+    "createdAt": "2025-05-14T09:45:00Z",
+    "updatedAt": "2025-05-14T09:45:00Z"
+  },
+  {
+    "categoryId": 1,
+    "title": "Tên miền .ai bùng nổ theo xu hướng trí tuệ nhân tạo",
+    "content": "Các tên miền liên quan đến AI như chatbot.ai, vision.ai đang được săn đón bởi các công ty công nghệ.",
+    "imageUrl": "/news-images/ai-domains.jpg",
+    "fileName": "ai-domains.jpg",
+    "filePath": "wwwroot/news-images/ai-domains.jpg",
+    "createdAt": "2025-05-15T11:20:00Z",
+    "updatedAt": "2025-05-15T11:20:00Z"
+  }
+]

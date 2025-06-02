@@ -3,10 +3,11 @@ using System.Security.Cryptography;
 using System.Text;
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 public class CustomerController(ICustomerRepository customerRepository, ITokenService tokenService, IPasswordResetTokenRepository passwordResetTokenRepository, IMailService mailService) : BaseApiController
@@ -46,9 +47,14 @@ public class CustomerController(ICustomerRepository customerRepository, ITokenSe
     }
     [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers()
+    public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await customerRepository.GetAllDtoAsync<CustomerDto>());
+        var customers = await customerRepository.GetAllDtoAsync<CustomerDto>(pagedListParams);
+
+        Response.AddPaginationHeader(customers);
+
+
+        return Ok(customers);
     }
     [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpGet("{id:int}")]

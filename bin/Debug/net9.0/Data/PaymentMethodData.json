@@ -1,0 +1,12 @@
+[
+    {
+        "PaymentMethodName": "Tiền mặt",
+        "CreatedAt": "2025-05-03T10:00:00",
+        "UpdatedAt": "2025-05-03T10:00:00"
+    },
+    {
+        "PaymentMethodName": "Chuyển khoản ngân hàng",
+        "CreatedAt": "2025-03-20T14:45:00",
+        "UpdatedAt": "2025-04-01T09:10:00"
+    }   
+]

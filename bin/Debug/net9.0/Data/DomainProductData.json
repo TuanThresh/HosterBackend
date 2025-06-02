@@ -1,0 +1,72 @@
+[
+  {
+    "DomainName": "vn",
+    "DomainType": 0,
+    "Price": 1500000,
+    "CreatedAt": "2025-05-01T12:00:00",
+    "UpdatedAt": "2025-05-01T12:00:00"
+  },
+  {
+    "DomainName": "com",
+    "DomainType": 1,
+    "Price": 1600000,
+    "CreatedAt": "2025-05-01T12:01:00",
+    "UpdatedAt": "2025-05-01T12:01:00"
+  },
+  {
+    "DomainName": "net",
+    "DomainType": 1,
+    "Price": 1700000,
+    "CreatedAt": "2025-05-01T12:02:00",
+    "UpdatedAt": "2025-05-01T12:02:00"
+  },
+  {
+    "DomainName": "org",
+    "DomainType": 1,
+    "Price": 1800000,
+    "CreatedAt": "2025-05-01T12:03:00",
+    "UpdatedAt": "2025-05-01T12:03:00"
+  },
+  {
+    "DomainName": "info",
+    "DomainType": 1,
+    "Price": 1900000,
+    "CreatedAt": "2025-05-01T12:04:00",
+    "UpdatedAt": "2025-05-01T12:04:00"
+  },
+  {
+    "DomainName": "biz",
+    "DomainType": 1,
+    "Price": 2000000,
+    "CreatedAt": "2025-05-01T12:05:00",
+    "UpdatedAt": "2025-05-01T12:05:00"
+  },
+  {
+    "DomainName": "pro",
+    "DomainType": 1,
+    "Price": 2100000,
+    "CreatedAt": "2025-05-01T12:06:00",
+    "UpdatedAt": "2025-05-01T12:06:00"
+  },
+  {
+    "DomainName": "name.vn",
+    "DomainType": 0,
+    "Price": 45000,
+    "CreatedAt": "2025-05-01T12:07:00",
+    "UpdatedAt": "2025-05-01T12:07:00"
+  },
+  {
+    "DomainName": "edu.vn",
+    "DomainType": 0,
+    "Price": 260000,
+    "CreatedAt": "2025-05-01T12:08:00",
+    "UpdatedAt": "2025-05-01T12:08:00"
+  },
+  {
+    "DomainName": "health.vn",
+    "DomainType": 0,
+    "Price": 260000,
+    "CreatedAt": "2025-05-01T12:09:00",
+    "UpdatedAt": "2025-05-01T12:09:00"
+  }
+] 

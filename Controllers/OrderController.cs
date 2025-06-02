@@ -4,11 +4,12 @@ using System.Text;
 using HosterBackend.Data.Entities;
 using HosterBackend.Data.Enums;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using HosterBackend.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 public class OrderController(IOrderRepository orderRepository,
@@ -64,7 +65,7 @@ IMailService mailService) : BaseApiController
 
 
 
-            await mailService.SendEmailAsync(customer.Email, "Mua tên miền", order);
+            await mailService.SendEmailAsync(customer.Email, "Mua tên miền", createdOrder);
 
         }
         catch (Exception ex)
@@ -119,14 +120,17 @@ IMailService mailService) : BaseApiController
         return Unauthorized("Không có quyền truy cập");
     }
 
-        [Authorize ]
+    [Authorize]
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders()
+    public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders([FromQuery] PagedListParams pagedListParams)
     {
+        PagedList<OrderDto> orders;
+
         if (User.Claims.Where(x => x.Type == ClaimTypes.Role).Any(c => c.Value == "Nhân viên phòng kỹ thuật hỗ trợ khách hàng"))
         {
-            return Ok(await orderRepository.GetAllDtoAsync<OrderDto>());
+            orders = await orderRepository.GetAllDtoAsync<OrderDto>(pagedListParams);
+
         }
         else if (User.Claims.Where(x => x.Type == ClaimTypes.Role).Any(c => c.Value == "Khách hàng"))
         {
@@ -134,9 +138,15 @@ IMailService mailService) : BaseApiController
 
             var customerId = int.Parse(customerNameIndentifier.Value);
 
-            return Ok(await orderRepository.GetAllDtoByPropertyAsync<OrderDto>(x => x.CustomerId == customerId));
+            orders = await orderRepository.GetAllDtoByPropertyAsync<OrderDto>(pagedListParams, x => x.CustomerId == customerId);
         }
-        return Unauthorized("Không có quyền truy cập");
+        else return Unauthorized("Không có quyền truy cập");
+
+        Response.AddPaginationHeader(orders);
+
+        return Ok(orders);
+
+        
     }
     [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
     [HttpDelete("{id:int}")]

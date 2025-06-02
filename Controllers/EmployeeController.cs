@@ -11,12 +11,12 @@ using HosterBackend.Data;
 using HosterBackend.Data.Entities;
 using HosterBackend.Data.Enums;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers
 {
     public class EmployeeController(IEmployeeRepository employeeRepository,
@@ -66,14 +66,18 @@ namespace HosterBackend.Controllers
         }
         [Authorize(Roles = "Quản trị viên")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
+        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees([FromQuery]PagedListParams pagedListParams)
         {
 
             var employeeNameIndentifier = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier) ?? throw new Exception("Không tìm thấy Id của khách hàng");
 
             var employeeId = int.Parse(employeeNameIndentifier.Value);
 
-            return Ok(await employeeRepository.GetAllDtoByPropertyAsync<EmployeeDto>(x => x.Id != employeeId));
+            var employees = await employeeRepository.GetAllDtoByPropertyAsync<EmployeeDto>(pagedListParams, x => x.Id != employeeId);
+
+            Response.AddPaginationHeader(employees);
+
+            return Ok(employees);
         }
         [Authorize(Roles = "Quản trị viên")]
         [HttpGet("{id:int}")]

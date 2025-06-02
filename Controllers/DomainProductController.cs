@@ -1,9 +1,11 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Data.Enums;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using HosterBackend.Extensions;
 
 namespace HosterBackend.Controllers;
 
@@ -15,9 +17,13 @@ public class DomainProductController(IDomainProductRepository domainProductRepos
     [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<DomainProductDto>>> GetDomainProducts()
+    public async Task<ActionResult<IEnumerable<DomainProductDto>>> GetDomainProducts([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await domainProductRepository.GetAllDtoAsync<DomainProductDto>());
+        var domainProducts = await domainProductRepository.GetAllDtoAsync<DomainProductDto>(pagedListParams);
+
+        Response.AddPaginationHeader(domainProducts);
+
+        return Ok(domainProducts);
     }
     [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 

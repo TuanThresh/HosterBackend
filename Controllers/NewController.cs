@@ -1,9 +1,10 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 
@@ -12,9 +13,13 @@ public class NewController(INewRepository newRepository) : BaseApiController
 {
     [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị,Khách hàng")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<NewDto>>> GetNews()
+    public async Task<ActionResult<IEnumerable<NewDto>>> GetNews([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await newRepository.GetAllDtoAsync<NewDto>());
+        var news = await newRepository.GetAllDtoAsync<NewDto>(pagedListParams);
+
+        Response.AddPaginationHeader(news);
+
+        return Ok(news);
     }
 
     [HttpGet("{id:int}")]

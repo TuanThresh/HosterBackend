@@ -1,8 +1,9 @@
 using HosterBackend.Data.Enums;
+using HosterBackend.Helpers;
 
 namespace HosterBackend.Dtos;
 
-public class EmployeeDto
+public class EmployeeDto 
 {
     public int Id { get; set; }
     public required string Email { get; set; }

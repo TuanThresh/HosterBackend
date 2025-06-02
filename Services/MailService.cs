@@ -4,7 +4,10 @@ using HosterBackend.Data.Entities;
 using HosterBackend.Data.Enums;
 using HosterBackend.Interfaces;
 using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using MimeKit;
+
+using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -25,7 +28,23 @@ public class MailService : IMailService
         var body = BuildOrderStatusEmail(order, username, password);
 
         var builder = new BodyBuilder { HtmlBody = body };
+
+        if (order.PaymentMethod.PaymentMethodName == "Chuyển khoản ngân hàng")
+        {
+            var imagePath = "wwwroot/chuyen-khoan.jpg";
+            var image = builder.LinkedResources.Add(imagePath);
+            image.ContentId = "image";
+            image.ContentType.MediaType = "image";
+            image.ContentType.MediaSubtype = "jpeg";
+        }
+        
+
         message.Body = builder.ToMessageBody();
+
+        
+
+        
+
 
         using var client = new SmtpClient();
         await client.ConnectAsync(_smtpServer, _smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
@@ -92,7 +111,11 @@ public class MailService : IMailService
                     <p>Chúng tôi đã nhận được yêu cầu đặt mua tên miền <strong>{domain}</strong>.</p>
                     <p>Vui lòng thanh toán để hoàn tất đơn hàng của bạn.</p>
                     <p><strong>Số tiền cần thanh toán:</strong> {total}</p>
+                    <img src='cid:image' style='width: 400px; height: auto;'>
+                    
                 ";
+
+                
                 break;
 
             case OrderStatusEnum.Paid:

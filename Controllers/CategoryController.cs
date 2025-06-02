@@ -1,17 +1,23 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
 public class CategoryController(ICategoryRepository categoryRepository) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategorys()
+    public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await categoryRepository.GetAllDtoAsync<CategoryDto>());
+        var categories = await categoryRepository.GetAllDtoAsync<CategoryDto>(pagedListParams);
+
+        Response.AddPaginationHeader(categories);
+
+
+        return Ok(categories);
     }
 
     [HttpGet("{id:int}")]

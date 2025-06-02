@@ -2,19 +2,22 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 [Authorize(Roles = "Quản trị viên")]
 public class RoleController(IRoleRepository roleRepository) : BaseApiController
 {
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
+    public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles([FromQuery]PagedListParams pagedListParams)
     {
-        var roles = await roleRepository.GetAllDtoAsync<RoleDto>(x => x.GivenEmployees);
+        var roles = await roleRepository.GetAllDtoAsync<RoleDto>(pagedListParams,x => x.GivenEmployees);
+
+        Response.AddPaginationHeader(roles);
 
         return Ok(roles);
     }

@@ -1,0 +1,20 @@
+[
+{
+  "name": "Tên miền phổ biến",
+  "description": "Những tên miền được sử dụng nhiều như .com, .net, .org",
+  "createdAt": "2025-05-10T10:00:00Z",
+  "updatedAt": "2025-05-17T12:00:00Z"
+},
+{
+  "name": "Tên miền sắp hết hạn",
+  "description": "Những domain đang gần đến ngày hết hạn, có thể mua lại",
+  "createdAt": "2025-05-12T07:00:00Z",
+  "updatedAt": "2025-05-17T09:00:00Z"
+},
+{
+  "name": "Tên miền ngành công nghệ",
+  "description": "Gợi ý các domain phù hợp với startup công nghệ",
+  "createdAt": "2025-05-09T08:00:00Z",
+  "updatedAt": "2025-05-16T18:00:00Z"
+}
+]

@@ -1,3 +1,5 @@
+using HosterBackend.Helpers;
+
 namespace HosterBackend.Dtos;
 
 public class DiscountDto

@@ -1,8 +1,9 @@
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 
@@ -11,9 +12,14 @@ public class DiscountController(IDiscountRepository discountRepository, IMailSer
 {
     [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<DiscountDto>>> GetDiscounts()
+    public async Task<ActionResult<IEnumerable<DiscountDto>>> GetDiscounts([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await discountRepository.GetAllDtoAsync<DiscountDto>());
+        var discounts = await discountRepository.GetAllDtoAsync<DiscountDto>(pagedListParams);
+
+        Response.AddPaginationHeader(discounts);
+
+
+        return Ok(discounts);
     }
     [Authorize (Roles = "Nhân viên phòng kinh doanh và tiếp thị")]
     [HttpGet("{id:int}")]

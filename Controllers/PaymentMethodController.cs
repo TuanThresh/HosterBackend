@@ -1,9 +1,10 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 [Route("api/payment_method")]
@@ -13,9 +14,14 @@ public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepos
 {
     [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PaymentMethodDto>>> GetPaymentMethods()
+    public async Task<ActionResult<IEnumerable<PaymentMethodDto>>> GetPaymentMethods([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await paymentMethodRepository.GetAllDtoAsync<PaymentMethodDto>());
+        var paymentMethods = await paymentMethodRepository.GetAllDtoAsync<PaymentMethodDto>(pagedListParams);
+
+        Response.AddPaginationHeader(paymentMethods);
+
+
+        return Ok();
     }
     [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 

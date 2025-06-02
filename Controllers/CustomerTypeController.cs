@@ -1,9 +1,10 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 [Route("api/customer_type")]
@@ -13,9 +14,13 @@ public class CustomerTypeController(ICustomerTypeRepository customerTypeReposito
 {
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CustomerTypeDto>>> GetCustomerTypes()
+    public async Task<ActionResult<IEnumerable<CustomerTypeDto>>> GetCustomerTypes([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await customerTypeRepository.GetAllDtoAsync<CustomerTypeDto>(x => x.HasCustomers));
+        var customerTypes = await customerTypeRepository.GetAllDtoAsync<CustomerTypeDto>(pagedListParams, x => x.HasCustomers);
+
+        Response.AddPaginationHeader(customerTypes);
+
+        return Ok(customerTypes);
     }
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerTypeDto>> GetCustomerType(int id)

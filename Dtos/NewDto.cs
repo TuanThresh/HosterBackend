@@ -1,4 +1,5 @@
 using HosterBackend.Data.Entities;
+using HosterBackend.Helpers;
 
 namespace HosterBackend.Dtos;
 

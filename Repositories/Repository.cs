@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using HosterBackend.Data;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,15 +63,18 @@ public class Repository<T> : IRepository<T> where T : class
         return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<TDto>> GetAllDtoAsync<TDto>(params Expression<Func<T, object>>[] includes) where TDto : class
+    public async Task<PagedList<TDto>> GetAllDtoAsync<TDto>(PagedListParams pagedListParams,params Expression<Func<T, object>>[] includes) where TDto : class
     {
         var query = _dbSet.AsQueryable();
 
         query = ExtendEntity(query,includes);
 
-        return await query
-                    .ProjectTo<TDto>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
+        var items = query.ProjectTo<TDto>(_mapper.ConfigurationProvider);
+
+        if (pagedListParams.CurrentPage == -1) pagedListParams.PageSize = await items.CountAsync();
+
+        return await PagedList<TDto>.GetPagedList(items, pagedListParams.PageSize, pagedListParams.CurrentPage);
+                    
     }
 
     public async Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes)
@@ -150,11 +154,18 @@ public class Repository<T> : IRepository<T> where T : class
         
         return await query.FirstOrDefaultAsync(predicate) ;
     }
-    public async Task<IEnumerable<TDto>> GetAllDtoByPropertyAsync<TDto>(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes) where TDto : class
+    public async Task<PagedList<TDto>> GetAllDtoByPropertyAsync<TDto>(PagedListParams pagedListParams,Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includes) where TDto : class
     {
         var query = ExtendEntity(_dbSet,includes);
+
+        var items = query.Where(predicate).ProjectTo<TDto>(_mapper.ConfigurationProvider);
+
+        if (pagedListParams.CurrentPage == -1)
+        {
+            pagedListParams.PageSize = await items.CountAsync();
+        }
         
-        return await query.Where(predicate).ProjectTo<TDto>(_mapper.ConfigurationProvider).ToListAsync() ?? throw new Exception($"Không tìm thấy {typeof(T).Name}");
+        return await PagedList<TDto>.GetPagedList(items, pagedListParams.PageSize, pagedListParams.CurrentPage) ?? throw new Exception($"Không tìm thấy {typeof(T).Name}");
     }
 
     public async Task<TDto> GetDtoByPropertyAsync<TDto>(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes) where TDto : class

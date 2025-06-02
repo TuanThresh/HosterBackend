@@ -1,9 +1,10 @@
 using HosterBackend.Data.Entities;
 using HosterBackend.Dtos;
+using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 [Route("api/registered_domain")]
@@ -13,9 +14,13 @@ public class RegisteredDomainController(IRegisteredDomainRepository registeredDo
 {
     [Authorize(Roles = "Khách hàng")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<RegisteredDomainDto>>> GetRegisteredDomains()
+    public async Task<ActionResult<IEnumerable<RegisteredDomainDto>>> GetRegisteredDomains([FromQuery]PagedListParams pagedListParams)
     {
-        return Ok(await registeredDomainRepository.GetAllDtoAsync<RegisteredDomainDto>());
+        var registeredDomains = await registeredDomainRepository.GetAllDtoAsync<RegisteredDomainDto>(pagedListParams);
+
+        Response.AddPaginationHeader(registeredDomains);
+
+        return Ok(registeredDomains);
     }
 
     [HttpGet("{id:int}")]
