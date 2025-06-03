@@ -3,6 +3,88 @@
   "ManifestType": "Build",
   "Endpoints": [
     {
+      "Route": "chuyen-khoan.ff7ku2xwqh.jpg",
+      "AssetFile": "chuyen-khoan.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "192468"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ZWdUBKa4xt+fROqWtvcc4twVR0gooKzRA1D4T2rFwZA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 02 Jun 2025 09:45:03 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ff7ku2xwqh"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-ZWdUBKa4xt+fROqWtvcc4twVR0gooKzRA1D4T2rFwZA="
+        },
+        {
+          "Name": "label",
+          "Value": "chuyen-khoan.jpg"
+        }
+      ]
+    },
+    {
+      "Route": "chuyen-khoan.jpg",
+      "AssetFile": "chuyen-khoan.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "192468"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ZWdUBKa4xt+fROqWtvcc4twVR0gooKzRA1D4T2rFwZA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 02 Jun 2025 09:45:03 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-ZWdUBKa4xt+fROqWtvcc4twVR0gooKzRA1D4T2rFwZA="
+        }
+      ]
+    },
+    {
       "Route": "news-images/ai-domains.62j6ksa7k8.jpg",
       "AssetFile": "news-images/ai-domains.jpg",
       "Selectors": [],

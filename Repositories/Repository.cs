@@ -5,7 +5,7 @@ using HosterBackend.Data;
 using HosterBackend.Helpers;
 using HosterBackend.Interfaces;
 using Microsoft.EntityFrameworkCore;
-
+using System.Linq.Dynamic.Core;
 namespace HosterBackend.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
@@ -69,7 +69,7 @@ public class Repository<T> : IRepository<T> where T : class
 
         query = ExtendEntity(query,includes);
 
-        var items = query.ProjectTo<TDto>(_mapper.ConfigurationProvider);
+        var items = query.AsSplitQuery().OrderBy("Id").ProjectTo<TDto>(_mapper.ConfigurationProvider);
 
         if (pagedListParams.CurrentPage == -1) pagedListParams.PageSize = await items.CountAsync();
 
@@ -158,7 +158,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         var query = ExtendEntity(_dbSet,includes);
 
-        var items = query.Where(predicate).ProjectTo<TDto>(_mapper.ConfigurationProvider);
+        var items = query.Where(predicate).OrderBy("Id").AsSplitQuery().ProjectTo<TDto>(_mapper.ConfigurationProvider);
 
         if (pagedListParams.CurrentPage == -1)
         {

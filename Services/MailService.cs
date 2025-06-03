@@ -29,7 +29,7 @@ public class MailService : IMailService
 
         var builder = new BodyBuilder { HtmlBody = body };
 
-        if (order.PaymentMethod.PaymentMethodName == "Chuyển khoản ngân hàng")
+        if (order.PaymentMethod.PaymentMethodName == "Chuyển khoản ngân hàng" && order.Status == OrderStatusEnum.Pending)
         {
             var imagePath = "wwwroot/chuyen-khoan.jpg";
             var image = builder.LinkedResources.Add(imagePath);
@@ -40,11 +40,6 @@ public class MailService : IMailService
         
 
         message.Body = builder.ToMessageBody();
-
-        
-
-        
-
 
         using var client = new SmtpClient();
         await client.ConnectAsync(_smtpServer, _smtpPort, MailKit.Security.SecureSocketOptions.StartTls);

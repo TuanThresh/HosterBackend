@@ -8,10 +8,11 @@ using HosterBackend.Extensions;
 namespace HosterBackend.Controllers;
 
 [Route("api/customer_type")]
-[Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng")]
+
 
 public class CustomerTypeController(ICustomerTypeRepository customerTypeRepository) : BaseApiController
 {
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Nhân viên phòng kinh doanh và tiếp thị")]
     
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerTypeDto>>> GetCustomerTypes([FromQuery]PagedListParams pagedListParams)
@@ -22,6 +23,8 @@ public class CustomerTypeController(ICustomerTypeRepository customerTypeReposito
 
         return Ok(customerTypes);
     }
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Nhân viên phòng kinh doanh và tiếp thị")]
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerTypeDto>> GetCustomerType(int id)
     {
@@ -37,6 +40,8 @@ public class CustomerTypeController(ICustomerTypeRepository customerTypeReposito
         }
         return Ok(customerType);
     }
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Nhân viên phòng kinh doanh và tiếp thị")]
+
     [HttpPost]
     public async Task<ActionResult> CreateCustomerType(ChangeCustomerTypeDto createCusomerTypeDto)
     {
@@ -50,6 +55,8 @@ public class CustomerTypeController(ICustomerTypeRepository customerTypeReposito
         }
         return Ok("Tạo loại khách hàng thành công");
     }
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Nhân viên phòng kinh doanh và tiếp thị")]
+
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdateCusomerType(int id,[FromBody]ChangeCustomerTypeDto updateCustomerTypeDto)
     {
@@ -63,6 +70,8 @@ public class CustomerTypeController(ICustomerTypeRepository customerTypeReposito
         }
         return Ok("Sửa loại khách hàng thành công");
     }
+    [Authorize(Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Nhân viên phòng kinh doanh và tiếp thị")]
+
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCustomerType(int id)
     {

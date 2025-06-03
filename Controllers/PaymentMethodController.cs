@@ -21,7 +21,7 @@ public class PaymentMethodController(IPaymentMethodRepository paymentMethodRepos
         Response.AddPaginationHeader(paymentMethods);
 
 
-        return Ok();
+        return Ok(paymentMethods);
     }
     [Authorize (Roles = "Nhân viên phòng kỹ thuật hỗ trợ khách hàng,Khách hàng")]
 

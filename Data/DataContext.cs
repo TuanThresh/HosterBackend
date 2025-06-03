@@ -25,6 +25,7 @@ public class DataContext : DbContext
     protected DataContext(){
 
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Authorize>()
@@ -32,12 +33,12 @@ public class DataContext : DbContext
                     .WithMany(x => x.HasRoles)
                     .HasForeignKey(x => x.EmployeeId)
                     .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<Authorize>()
                     .HasOne(x => x.Role)
                     .WithMany(x => x.GivenEmployees)
                     .HasForeignKey(x => x.RoleId)
                     .OnDelete(DeleteBehavior.Cascade);
-        
+
     }
 }

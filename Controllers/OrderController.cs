@@ -210,7 +210,7 @@ IMailService mailService) : BaseApiController
 
                 foreach (var domainAccount in await domainAccountRepository.GetAllAsync(x => x.RegisteredDomains))
                 {
-                    if (domainAccount.RegisteredDomains.Any(x => x.DomainProductId == orderToUpdate.DomainProductId))
+                    if (domainAccount.RegisteredDomains.Any(x => x.DomainProductId == orderToUpdate.DomainProductId && x.DomainAccount.Username.Contains(customer.Name)))
                     {
                         createNewAccount = false;
 

@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "D:\\Backend\\wwwroot\\chuyen-khoan.jpg",
+      "PackagePath": "staticwebassets\\chuyen-khoan.jpg"
+    },
+    {
       "Id": "D:\\Backend\\wwwroot\\news-images\\ai-domains.jpg",
       "PackagePath": "staticwebassets\\news-images\\ai-domains.jpg"
     },
